@@ -21,7 +21,7 @@ export function SpatialIntelligenceView({ nodes, selected, layer, onSelect }) {
         const scene = new THREE.Scene();
         const readColor = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
         const surface = new THREE.Color();
-        surface.setStyle(readColor("--bg-surface") || "#222622");
+        surface.setStyle(readColor("--bg-surface") || "#FFFDF8");
         scene.background = surface;
         const camera = new THREE.PerspectiveCamera(38, 1, .1, 100);
         camera.position.set(4.8, 5.2, 7.6);
@@ -38,10 +38,10 @@ export function SpatialIntelligenceView({ nodes, selected, layer, onSelect }) {
         const light = new THREE.DirectionalLight(0xffffff, 1.8);
         light.position.set(-3, 7, 4);
         scene.add(light);
-        const ground = new THREE.Mesh(new THREE.BoxGeometry(5.2, .08, 4.4), new THREE.MeshStandardMaterial({ color: readColor("--bg-subtle") || "#2c302b", roughness: .9 }));
+        const ground = new THREE.Mesh(new THREE.BoxGeometry(5.2, .08, 4.4), new THREE.MeshStandardMaterial({ color: readColor("--bg-subtle") || "#F3ECDF", roughness: .9 }));
         ground.position.y = -.07;
         scene.add(ground);
-        const grid = new THREE.GridHelper(5.2, 13, readColor("--border-control") || "#7e847a", readColor("--border-subtle") || "#40473e");
+        const grid = new THREE.GridHelper(5.2, 13, readColor("--border-control") || "#8A7C70", readColor("--border-subtle") || "#E4D9C8");
         grid.position.y = -.02;
         scene.add(grid);
         const nodesGroup = new THREE.Group();
@@ -49,7 +49,7 @@ export function SpatialIntelligenceView({ nodes, selected, layer, onSelect }) {
         const raycaster = new THREE.Raycaster();
         const pointer = new THREE.Vector2();
         const pickTargets = [];
-        const cssColor = (name) => { const color = new THREE.Color(); color.setStyle(readColor(name) || "#e4b76b"); return color; };
+        const cssColor = (name) => { const color = new THREE.Color(); color.setStyle(readColor(name) || "#B5562E"); return color; };
         const accent = cssColor("--chart-series-1");
         const teal = cssColor("--chart-series-2");
         const low = cssColor("--chart-series-3");

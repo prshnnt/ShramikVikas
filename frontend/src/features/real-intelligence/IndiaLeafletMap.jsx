@@ -56,18 +56,17 @@ export function resolveRegionId(featureName) {
   return NAME_TO_ID[clean] || null;
 }
 
-// Sophisticated choropleth color interpolation matching design system
+// Choropleth color palette matching DESIGN.md §3.3 (teal -> sage -> ochre -> terracotta)
 function getChoroplethColor(value, min, max) {
-  if (value === undefined || value === null) return "#40473e";
+  if (value === undefined || value === null) return "#ECEAE6";
   const range = max - min || 1;
   const ratio = Math.max(0, Math.min(1, (value - min) / range));
 
-  // Vibrant gradient from navy/teal (low) -> amber/gold (high)
-  if (ratio < 0.25) return "#1e3a8a"; // deep blue
-  if (ratio < 0.5) return "#0284c7"; // sky blue
-  if (ratio < 0.75) return "#10b981"; // emerald
-  if (ratio < 0.9) return "#eab308"; // warm gold
-  return "#f97316"; // vibrant amber/orange
+  if (ratio < 0.25) return "#2F6F6A"; // teal
+  if (ratio < 0.5) return "#6F8F72";  // sage
+  if (ratio < 0.75) return "#C8922E"; // ochre
+  if (ratio < 0.9) return "#9E4A26";  // deep terracotta
+  return "#B5562E"; // terracotta
 }
 
 export function IndiaLeafletMap({
@@ -156,12 +155,12 @@ export function IndiaLeafletMap({
         const isHovered = regionId && hoveredRegionId === regionId;
         const isSelected = regionId && selectedRegionId === regionId;
 
-        const fillColor = val !== undefined ? getChoroplethColor(val, minValue, maxValue) : "#333833";
+        const fillColor = val !== undefined ? getChoroplethColor(val, minValue, maxValue) : "#ECEAE6";
 
         return {
           fillColor,
-          fillOpacity: isHovered || isSelected ? 0.95 : 0.72,
-          color: isHovered || isSelected ? "#ffffff" : "#4a554a",
+          fillOpacity: isHovered || isSelected ? 0.95 : 0.75,
+          color: isHovered || isSelected ? "#B5562E" : "#8A7C70",
           weight: isHovered || isSelected ? 2.5 : 1,
           dashArray: val !== undefined ? "" : "3, 3",
         };
@@ -181,7 +180,7 @@ export function IndiaLeafletMap({
             const target = e.target;
             target.setStyle({
               weight: 2.5,
-              color: "#ffffff",
+              color: "#B5562E",
               fillOpacity: 0.95,
             });
             if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
@@ -230,7 +229,7 @@ export function IndiaLeafletMap({
       if (isHovered || isSelected) {
         layer.setStyle({
           weight: 2.8,
-          color: "#ffffff",
+          color: "#B5562E",
           fillOpacity: 0.95,
         });
         if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
@@ -239,8 +238,8 @@ export function IndiaLeafletMap({
       } else {
         layer.setStyle({
           weight: 1,
-          color: "#4a554a",
-          fillOpacity: 0.72,
+          color: "#8A7C70",
+          fillOpacity: 0.75,
         });
       }
     });

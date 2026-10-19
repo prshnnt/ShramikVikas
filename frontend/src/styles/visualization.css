@@ -99,9 +99,9 @@
 .legend-gradient-bar {
   width: 110px;
   height: 8px;
-  border-radius: 4px;
-  background: linear-gradient(to right, #1e3a8a, #0284c7, #10b981, #eab308, #f97316);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(to right, var(--chart-series-2), var(--chart-series-4), var(--chart-series-3), var(--chart-series-1));
+  border: 1px solid var(--border-subtle);
 }
 
 .legend-bounds {
@@ -137,14 +137,14 @@
   width: 100%;
   height: 520px;
   background-color: var(--bg-surface);
-  background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-image: radial-gradient(circle at 50% 50%, rgba(43, 36, 32, 0.05) 1px, transparent 1px);
   background-size: 20px 20px;
   z-index: 1;
 }
 
 [data-theme="light"] .leaflet-dom-map {
-  background-color: #f4f6f3;
-  background-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  background-color: var(--bg-canvas);
+  background-image: radial-gradient(circle at 50% 50%, rgba(43, 36, 32, 0.05) 1px, transparent 1px);
 }
 
 /* Floating Hover Card on Map */
@@ -155,10 +155,10 @@
   min-width: 200px;
   max-width: 280px;
   background: var(--bg-surface);
-  border: 1px solid var(--border-control);
-  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
   padding: var(--space-3);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  box-shadow: var(--shadow-card);
   pointer-events: none;
   z-index: 1000;
 }

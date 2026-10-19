@@ -1,13 +1,13 @@
 /* Phase 2.3 public visual language: editorial data, restrained pigment, clear evidence. */
 :root {
-  --font-editorial: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --font-editorial: var(--font-display);
   --public-content: 1248px;
   --public-section-space: clamp(56px, 8vw, 112px);
   --public-rail: var(--accent-text);
 }
 html, body { overflow-x: clip; }
 .public-site { color: var(--text-primary); }
-.public-site h1, .public-site h2 { font-family: var(--font-editorial); font-weight: 400; letter-spacing: -.025em; }
+.public-site h1, .public-site h2 { font-family: var(--font-display); font-weight: 500; letter-spacing: -.025em; }
 .public-site p { text-wrap: pretty; }
 .public-section { padding-block: var(--public-section-space); }
 .home-hero-network {
