@@ -2,9 +2,12 @@
 (() => {
   const key = "kaushaliq.theme.v1";
   const media = window.matchMedia("(prefers-color-scheme: dark)");
-  const valid = value => ["light", "dark", "system"].includes(value) ? value : "system";
-  let preference = "system";
-  try { preference = valid(localStorage.getItem(key)); } catch { /* In-memory fallback. */ }
+  const valid = value => ["light", "dark", "system"].includes(value) ? value : null;
+  let preference = "light";
+  try {
+    const saved = localStorage.getItem(key);
+    if (saved && valid(saved)) preference = valid(saved);
+  } catch { /* In-memory fallback. */ }
   let snapshot;
   const listeners = new Set();
   function apply() {
