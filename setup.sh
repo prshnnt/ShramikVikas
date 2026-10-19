@@ -13,5 +13,5 @@ cd ..
 echo "cd backend"
 cd backend
 
-echo "uv sync"
-uv sync
+echo "pip install -r requirements.txt"
+pip install -r requirements.txt
