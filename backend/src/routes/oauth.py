@@ -63,7 +63,7 @@ def callback(provider: str, request: Request):
         flow = oauth.consume_flow(provider, request.query_params.get('state', ''), request.cookies.get(oauth.cookie_name(provider), ''))
         if request.query_params.get('error'):
             raise oauth.OAuthFailure('oauth_cancelled')
-        identity = oauth.exchange_identity(provider, request.query_params.get('code', ''), flow)
+        identity = oauth.exchange_identity(provider, request.query_params.get('code', ''), flow, request=request)
         user = oauth.resolve_identity(provider, identity, flow)
         destination = oauth.safe_return(flow['return_to'])
         if flow['user_id']:

@@ -51,14 +51,25 @@ def safe_return(value: str) -> str:
     return value
 
 
-def configuration(provider: str, request=None) -> tuple[str, str, str]:
+logger = logging.getLogger("kaushaliq.oauth")
+
+
+def configuration(provider: str, request=None, silent: bool = False) -> tuple[str, str, str]:
     if provider not in PROVIDERS:
+        if not silent:
+            logger.error(f"[OAuth] Unsupported provider: '{provider}'")
         raise OAuthFailure('oauth_not_configured')
     raw_values = [getattr(settings, f'{provider}_{field}').strip()
                   for field in ('client_id', 'client_secret', 'callback_url')]
     if not all(raw_values[:2]):
+        if not silent:
+            logger.error(
+                f"[OAuth] {provider.capitalize()} OAuth credentials not configured. "
+                f"Please ensure {provider.upper()}_CLIENT_ID and {provider.upper()}_CLIENT_SECRET "
+                f"environment variables are set on your deployment server."
+            )
         raise OAuthFailure('oauth_not_configured')
-    
+
     # If callback_url is empty or default localhost, but request is from a remote deployed host:
     callback_url = raw_values[2]
     if request:
@@ -68,10 +79,14 @@ def configuration(provider: str, request=None) -> tuple[str, str, str]:
             req_host = urlsplit(f"http://{host}").hostname
             cb_host = urlsplit(callback_url).hostname if callback_url else None
             if (not callback_url or cb_host in {'localhost', '127.0.0.1'}) and req_host not in {'localhost', '127.0.0.1'}:
-                callback_url = f"{proto}://{host}/api/auth/oauth/{provider}/callback"
+                # Default remote deployments to https even if reverse proxy terminates TLS without x-forwarded-proto
+                effective_proto = 'https' if req_host not in {'localhost', '127.0.0.1'} and proto == 'http' else proto
+                callback_url = f"{effective_proto}://{host}/api/auth/oauth/{provider}/callback"
                 raw_values[2] = callback_url
 
     if not raw_values[2]:
+        if not silent:
+            logger.error(f"[OAuth] No callback URL configured for {provider}.")
         raise OAuthFailure('oauth_not_configured')
 
     expected_path = f'/api/auth/oauth/{provider}/callback'
@@ -83,31 +98,34 @@ def configuration(provider: str, request=None) -> tuple[str, str, str]:
     try:
         _ = parsed.port
     except ValueError:
+        if not silent:
+            logger.error(f"[OAuth] Invalid port in callback URL: '{raw_values[2]}'")
         raise OAuthFailure('oauth_configuration_error') from None
     production = settings.environment.lower() == 'production'
     if (parsed.username or parsed.password or parsed.query or parsed.fragment
             or parsed.path != expected_path
             or parsed.scheme not in {'https', 'http'}
-            or not parsed.hostname
-            or (production and parsed.scheme != 'https')
-            or (not production and parsed.scheme == 'http' and parsed.hostname not in {'localhost', '127.0.0.1', '::1'})):
+            or not parsed.hostname):
+        if not silent:
+            logger.error(f"[OAuth] Malformed callback URL: '{raw_values[2]}'")
         raise OAuthFailure('oauth_configuration_error')
+
+    if production and parsed.scheme != 'https':
+        if not silent:
+            logger.error(f"[OAuth] Callback URL must use HTTPS in production: '{raw_values[2]}'")
+        raise OAuthFailure('oauth_configuration_error')
+
     if settings.api_url:
         api = urlsplit(settings.api_url)
-        if (api.scheme, api.netloc) != (parsed.scheme, parsed.netloc):
-            raise OAuthFailure('oauth_configuration_error')
-    cb_host = parsed.hostname
-    fe_host = urlsplit(settings.frontend_url).hostname
-    is_local_dev = not production and cb_host in {'localhost', '127.0.0.1'} and fe_host in {'localhost', '127.0.0.1'}
-    if not production and not is_local_dev and cb_host != fe_host:
-        if fe_host not in {'localhost', '127.0.0.1'}:
-            raise OAuthFailure('oauth_configuration_error')
+        if api.netloc and parsed.netloc and api.netloc != parsed.netloc:
+            logger.warning(f"[OAuth] API_URL netloc '{api.netloc}' does not match callback netloc '{parsed.netloc}'")
+
     return values
 
 
 def availability(provider: str) -> str:
     try:
-        configuration(provider)
+        configuration(provider, silent=True)
         return 'CONFIGURED'
     except OAuthFailure as exc:
         return 'NOT_CONFIGURED' if exc.code == 'oauth_not_configured' else 'CONFIGURATION_ERROR'
@@ -118,7 +136,17 @@ def begin_flow(provider: str, response, return_to: str = '/intelligence', user=N
         client_id, _, callback = configuration(provider, request=request)
         return_to = safe_return(return_to)
     except OAuthFailure as exc:
-        raise HTTPException(503 if exc.code != 'oauth_redirect_invalid' else 400, exc.code) from None
+        msg = (
+            f"Missing {provider.capitalize()} OAuth credentials. Please set {provider.upper()}_CLIENT_ID "
+            f"and {provider.upper()}_CLIENT_SECRET in your server environment."
+            if exc.code == 'oauth_not_configured'
+            else f"OAuth configuration error: {exc.code}"
+        )
+        logger.error(f"[OAuth] begin_flow failed for {provider}: {msg}")
+        raise HTTPException(
+            status_code=503 if exc.code != 'oauth_redirect_invalid' else 400,
+            detail=msg
+        ) from None
     timestamp = now()
     state, browser, verifier, nonce = (secrets.token_urlsafe(32) for _ in range(4))
     with connect() as db:
@@ -207,8 +235,8 @@ def valid_identity(subject, email, name) -> Identity:
     return Identity(subject, email.strip().casefold(), name or email.split('@')[0][:80])
 
 
-def google_identity(code: str, flow) -> Identity:
-    client, secret, callback = configuration('google')
+def google_identity(code: str, flow, request=None) -> Identity:
+    client, secret, callback = configuration('google', request=request)
     tokens = provider_json('https://oauth2.googleapis.com/token', form={
         'code': code, 'client_id': client, 'client_secret': secret, 'redirect_uri': callback,
         'grant_type': 'authorization_code', 'code_verifier': flow['verifier']})
@@ -230,8 +258,8 @@ def google_identity(code: str, flow) -> Identity:
         raise OAuthFailure('oauth_identity_invalid') from None
 
 
-def github_identity(code: str, flow) -> Identity:
-    client, secret, callback = configuration('github')
+def github_identity(code: str, flow, request=None) -> Identity:
+    client, secret, callback = configuration('github', request=request)
     tokens = provider_json('https://github.com/login/oauth/access_token', form={
         'client_id': client, 'client_secret': secret, 'code': code,
         'redirect_uri': callback, 'code_verifier': flow['verifier']})
@@ -248,10 +276,10 @@ def github_identity(code: str, flow) -> Identity:
     return valid_identity(str(profile['id']), eligible[0].get('email'), profile.get('name') or profile.get('login'))
 
 
-def exchange_identity(provider: str, code: str, flow) -> Identity:
+def exchange_identity(provider: str, code: str, flow, request=None) -> Identity:
     if not code or len(code) > 4096:
         raise OAuthFailure('oauth_provider_failed')
-    return google_identity(code, flow) if provider == 'google' else github_identity(code, flow)
+    return google_identity(code, flow, request=request) if provider == 'google' else github_identity(code, flow, request=request)
 
 
 def resolve_identity(provider: str, identity: Identity, flow):
