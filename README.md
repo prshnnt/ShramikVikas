@@ -4,7 +4,7 @@
 
 > **Shramik Vikas** is a futuristic, data-driven Labour Market Intelligence platform designed to continuously understand the relationship between **jobs, skills, workforce supply, industries, regions, training ecosystems, and future demand**.
 
-Shramik Vikas is proposed for **Smart India Hackathon 2026 : AI-Enabled Labour Market Intelligence and Skill Demand-Supply Forecasting Engine** under the **Ministry of Skill Development and Entrepreneurship (MSDE)**.
+Shramik Vikas is proposed for **Smart India Hackathon 2026: AI-Enabled Labour Market Intelligence and Skill Demand-Supply Forecasting Engine** under the **Ministry of Skill Development and Entrepreneurship (MSDE)**.
 
 ---
 
