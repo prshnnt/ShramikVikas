@@ -1,0 +1,203 @@
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.hypothesis/
+.env
+.env.*
+!.env.example
+!.env.template
+*.log
+logs/
+log/
+
+# -------------------------
+# Local databases
+# -------------------------
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# -------------------------
+# User / Resume uploads
+# -------------------------
+uploads/
+storage/
+media/
+
+user_uploads/
+private_uploads/
+
+resumes/
+resume_uploads/
+
+# -------------------------
+# Generated / Runtime data
+# -------------------------
+generated/
+generated-data/
+runtime/
+runtime-data/
+
+tmp/
+temp/
+
+# -------------------------
+# Python tooling
+# -------------------------
+.pyre/
+.pytype/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# -------------------------
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+.agents
+docs
+.claude
+skills-lock.json
+data
+
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+.idea/
+*.swp
+*.swo
+*~
+
+# -------------------------
+# Environment / Secrets
+# -------------------------
+.env
+.env.*
+!.env.example
+!.env.template
+
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# -------------------------
+# Logs
+# -------------------------
+*.log
+logs/
+log/
+
+# -------------------------
+# Temporary files
+# -------------------------
+tmp/
+temp/
+.cache/
+.cache-loader/
+
+# -------------------------
+# Python
+# -------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.hypothesis/
+.coverage
+.coverage.*
+htmlcov/
+
+# -------------------------
+# Node / Frontend
+# -------------------------
+node_modules/
+.npm/
+.pnpm-store/
+.yarn/
+.yarn-cache/
+.yarn-integrity
+
+# Build output
+dist/
+build/
+coverage/
+
+# Vite
+.vite/
+
+# -------------------------
+# Runtime / Local data
+# -------------------------
+*.pid
+*.pid.lock
+
+# SQLite / local databases
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# -------------------------
+# User-generated / private data
+# -------------------------
+uploads/
+storage/
+media/
+user_uploads/
+private_uploads/
+resumes/
+resume_uploads/
+
+# -------------------------
+# Generated application data
+# -------------------------
+generated/
+generated-data/
+runtime/
+runtime-data/
+
+# -------------------------
+# OS generated
+# -------------------------
+.Trashes/
+ehthumbs.db
+# Phase 2.7 private account documents; never source-controlled
+private-resumes/

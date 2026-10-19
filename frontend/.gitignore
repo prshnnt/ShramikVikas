@@ -1,0 +1,68 @@
+
+node_modules/
+
+.npm/
+.pnpm-store/
+
+.yarn/
+.yarn-cache/
+.yarn-integrity
+
+# -------------------------
+# Environment / Secrets
+# -------------------------
+.env
+.env.*
+!.env.example
+!.env.template
+
+# -------------------------
+# Build output
+# -------------------------
+dist/
+build/
+coverage/
+
+.vite/
+
+# -------------------------
+# Logs
+# -------------------------
+*.log
+logs/
+
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# -------------------------
+# Testing / Reports
+# -------------------------
+playwright-report/
+test-results/
+blob-report/
+
+# -------------------------
+# Cache
+# -------------------------
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+
+# -------------------------
+# Editor / OS
+# -------------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+.idea/
+
+*.swp
+*.swo
+*~
