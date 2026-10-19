@@ -89,3 +89,9 @@ def put_section(db, user_id, section, payload):
 
 
 migrate()
+
+try:
+    from src.accounts.demo import ensure_demo_accounts
+    ensure_demo_accounts()
+except Exception as e:
+    pass

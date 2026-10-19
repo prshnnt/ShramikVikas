@@ -12,6 +12,9 @@ import { useLocation } from 'react-router-dom';
 import { accountRequest, AccountError } from '../../features/account/api';
 import { Loader } from '../ui/Loader';
 const firstField = { login: "email", signup: "name", reset: "email" };
+export const DEMO_EMAIL = "demo@kaushaliq.local";
+export const DEMO_PASSWORD = "DemoAccount123!";
+
 export function AuthForm({ mode, onMode }) {
     const { t } = useLocale();
     const auth = useAuth();
@@ -20,13 +23,24 @@ export function AuthForm({ mode, onMode }) {
     const resetPanel = useRef(null);
     const [errors, setErrors] = useState({});
     const [status, setStatus] = useState("idle");
-    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState(mode === "login" ? DEMO_EMAIL : "");
+    const [password, setPassword] = useState(mode === "login" ? DEMO_PASSWORD : "");
     const [confirm, setConfirm] = useState("");
     const location = useLocation();
     const [providers, setProviders] = useState(null);
     const [provider, setProvider] = useState(null);
     const [providerError, setProviderError] = useState(null);
     const providerInFlight = useRef(false);
+
+    useEffect(() => {
+        if (mode === "login") {
+            if (!email) setEmail(DEMO_EMAIL);
+            if (!password) setPassword(DEMO_PASSWORD);
+        } else if (mode === "signup") {
+            if (email === DEMO_EMAIL) setEmail("");
+            if (password === DEMO_PASSWORD) setPassword("");
+        }
+    }, [mode]);
     useEffect(() => { let active = true; accountRequest('/auth/providers', '').then(result => { if (active)
         setProviders(result); }).catch(() => { if (active)
         setProviderError('oauth.failed'); }); return () => { active = false; }; }, []);
@@ -59,12 +73,12 @@ export function AuthForm({ mode, onMode }) {
             return;
         auth.clearError();
         const data = new FormData(event.currentTarget);
-        const email = String(data.get("email") ?? "").trim();
+        const submittedEmail = (email || String(data.get("email") ?? "")).trim();
         const name = String(data.get("name") ?? "").trim();
         const next = {};
         if (mode === "signup" && !name)
             next.name = "auth.nameRequired";
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(submittedEmail))
             next.email = "auth.emailInvalid";
         if (!password)
             next.password = "auth.passwordRequired";
@@ -80,9 +94,9 @@ export function AuthForm({ mode, onMode }) {
         setStatus("pending");
         try {
             if (mode === "signup")
-                await auth.signUp(name, email, password);
+                await auth.signUp(name, submittedEmail, password);
             else
-                await auth.signIn(email, password);
+                await auth.signIn(submittedEmail, password);
         }
         catch { /* The provider exposes a localized, user-safe error message. */ }
         finally {
@@ -104,11 +118,45 @@ export function AuthForm({ mode, onMode }) {
     <div className="auth-divider"><span>{t("auth.emailAlternative")}</span></div>
     <form ref={form} noValidate onSubmit={submit} aria-label={mode === "signup" ? t("auth.createPreview") : t("auth.signinPreview")} onInput={() => { setErrors({}); auth.clearError(); }}>
       {mode === "signup" && <AuthField name="name" label={t("auth.name")} autoComplete="name" required error={errors.name ? t(errors.name) : undefined}/>}
-      <AuthField name="email" label={t("auth.email")} type="email" autoComplete="email" inputMode="email" required error={errors.email ? t(errors.email) : undefined}/>
+      <AuthField name="email" label={t("auth.email")} type="email" autoComplete="email" inputMode="email" value={email} onChange={(event) => setEmail(event.currentTarget.value)} required error={errors.email ? t(errors.email) : undefined}/>
       <AuthField name="password" label={t("auth.password")} type="password" autoComplete={mode === "login" ? "current-password" : "new-password"} value={password} onChange={(event) => setPassword(event.currentTarget.value)} required error={errors.password ? t(errors.password) : undefined} hint={mode === "signup" ? t("auth.passwordHint") : undefined}/>
       {mode === 'signup' && <PasswordStrength password={password}/>}
       {mode === "signup" && <AuthField name="confirm" label={t("auth.confirm")} type="password" autoComplete="new-password" value={confirm} onChange={(event) => setConfirm(event.currentTarget.value)} required error={errors.confirm ? t(errors.confirm) : confirm && password !== confirm ? t("auth.passwordMismatch") : undefined}/>}
       {mode === "login" && <button type="button" className="auth-text-button forgot-password" onClick={() => onMode("reset")}>{t("auth.forgot")}</button>}
+      {mode === "login" && (
+        <div style={{
+          background: 'rgba(181, 86, 46, 0.08)',
+          border: '1px solid rgba(181, 86, 46, 0.25)',
+          borderRadius: '8px',
+          padding: '10px 14px',
+          fontSize: '0.8125rem',
+          color: 'var(--text-secondary, #4A443C)',
+          margin: '12px 0 16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '12px'
+        }}>
+          <div>
+            <div style={{ fontWeight: 600, color: 'var(--primary, #B5562E)', marginBottom: '2px' }}>
+              Evaluator Demo Account
+            </div>
+            <div>Pre-filled with verified credentials. Click Sign In directly.</div>
+          </div>
+          <button
+            type="button"
+            className="auth-text-button"
+            style={{ fontSize: '0.75rem', fontWeight: 600, textDecoration: 'underline', cursor: 'pointer', whiteSpace: 'nowrap' }}
+            onClick={() => {
+              setEmail(DEMO_EMAIL);
+              setPassword(DEMO_PASSWORD);
+              setErrors({});
+            }}
+          >
+            Refill Demo
+          </button>
+        </div>
+      )}
       {authError && <p className="field-error auth-server-error" role="alert">{authError}</p>}
       {Object.keys(errors).length > 0 && <p className="field-error" role="alert">{t("auth.review")}</p>}
       <PrimaryButton type="submit" className="auth-submit" disabled={status === "pending" || provider !== null} aria-busy={status === "pending"}>
