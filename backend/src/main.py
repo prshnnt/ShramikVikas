@@ -21,7 +21,7 @@ app = FastAPI(
     version=settings.app_version,
 )
 
-cors_origins = [settings.frontend_url]
+cors_origins = [origin.strip() for origin in settings.frontend_url.split(",") if origin.strip()]
 if settings.environment.lower() != "production":
     for origin in ("http://localhost:8000", "http://127.0.0.1:8000", "http://localhost:5173", "http://127.0.0.1:5173"):
         if origin not in cors_origins:

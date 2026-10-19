@@ -51,13 +51,29 @@ def safe_return(value: str) -> str:
     return value
 
 
-def configuration(provider: str) -> tuple[str, str, str]:
+def configuration(provider: str, request=None) -> tuple[str, str, str]:
     if provider not in PROVIDERS:
         raise OAuthFailure('oauth_not_configured')
     raw_values = [getattr(settings, f'{provider}_{field}').strip()
                   for field in ('client_id', 'client_secret', 'callback_url')]
-    if not all(raw_values):
+    if not all(raw_values[:2]):
         raise OAuthFailure('oauth_not_configured')
+    
+    # If callback_url is empty or default localhost, but request is from a remote deployed host:
+    callback_url = raw_values[2]
+    if request:
+        proto = request.headers.get('x-forwarded-proto') or request.url.scheme or 'https'
+        host = request.headers.get('x-forwarded-host') or request.headers.get('host')
+        if host:
+            req_host = urlsplit(f"http://{host}").hostname
+            cb_host = urlsplit(callback_url).hostname if callback_url else None
+            if (not callback_url or cb_host in {'localhost', '127.0.0.1'}) and req_host not in {'localhost', '127.0.0.1'}:
+                callback_url = f"{proto}://{host}/api/auth/oauth/{provider}/callback"
+                raw_values[2] = callback_url
+
+    if not raw_values[2]:
+        raise OAuthFailure('oauth_not_configured')
+
     expected_path = f'/api/auth/oauth/{provider}/callback'
     parsed = urlsplit(raw_values[2])
     if parsed.path in {'', '/'}:
@@ -84,7 +100,8 @@ def configuration(provider: str) -> tuple[str, str, str]:
     fe_host = urlsplit(settings.frontend_url).hostname
     is_local_dev = not production and cb_host in {'localhost', '127.0.0.1'} and fe_host in {'localhost', '127.0.0.1'}
     if not production and not is_local_dev and cb_host != fe_host:
-        raise OAuthFailure('oauth_configuration_error')
+        if fe_host not in {'localhost', '127.0.0.1'}:
+            raise OAuthFailure('oauth_configuration_error')
     return values
 
 
@@ -96,9 +113,9 @@ def availability(provider: str) -> str:
         return 'NOT_CONFIGURED' if exc.code == 'oauth_not_configured' else 'CONFIGURATION_ERROR'
 
 
-def begin_flow(provider: str, response, return_to: str = '/intelligence', user=None):
+def begin_flow(provider: str, response, return_to: str = '/intelligence', user=None, request=None):
     try:
-        client_id, _, callback = configuration(provider)
+        client_id, _, callback = configuration(provider, request=request)
         return_to = safe_return(return_to)
     except OAuthFailure as exc:
         raise HTTPException(503 if exc.code != 'oauth_redirect_invalid' else 400, exc.code) from None

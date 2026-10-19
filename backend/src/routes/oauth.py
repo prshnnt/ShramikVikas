@@ -14,11 +14,27 @@ class Start(BaseModel):
     return_to: str = Field(default='/intelligence', max_length=1500)
 
 
+def get_frontend_base(request: Request) -> str:
+    fe_url = settings.frontend_url.rstrip('/')
+    fe_host = urlsplit(fe_url).hostname
+    
+    proto = request.headers.get('x-forwarded-proto') or request.url.scheme or 'https'
+    host = request.headers.get('x-forwarded-host') or request.headers.get('host')
+    if host:
+        req_host = urlsplit(f"http://{host}").hostname
+        # If frontend_url is still localhost, but request is on a remote domain:
+        if fe_host in {'localhost', '127.0.0.1', None, ''} and req_host not in {'localhost', '127.0.0.1'}:
+            return f"{proto}://{host}".rstrip('/')
+        if settings.environment.lower() != 'production' and req_host in {'localhost', '127.0.0.1'}:
+            return f"{proto}://{host}".rstrip('/')
+    return fe_url
+
+
 @router.post('/{provider}/start')
 def start(provider: str, body: Start, request: Request, response: Response):
     validate_csrf(request)
     rate_limit(request, 'oauth-start:' + provider)
-    return oauth.begin_flow(provider, response, body.return_to)
+    return oauth.begin_flow(provider, response, body.return_to, request=request)
 
 
 @router.post('/{provider}/link')
@@ -29,7 +45,7 @@ def link(provider: str, request: Request, response: Response, session=Depends(cu
     rate_limit(request, user['id'] + ':provider')
     if provider not in oauth.PROVIDERS:
         raise HTTPException(404, 'not_found')
-    return oauth.begin_flow(provider, response, '/settings', user)
+    return oauth.begin_flow(provider, response, '/settings', user, request=request)
 
 
 @router.get('/{provider}/callback')
@@ -38,12 +54,7 @@ def callback(provider: str, request: Request):
         raise HTTPException(404, 'not_found')
     flow = None
     response = None
-    frontend_base = settings.frontend_url.rstrip('/')
-    host_header = request.headers.get('host')
-    if host_header and settings.environment.lower() != 'production':
-        req_host = urlsplit(f"http://{host_header}").hostname
-        if req_host in {'localhost', '127.0.0.1'}:
-            frontend_base = f"{request.url.scheme}://{host_header}".rstrip('/')
+    frontend_base = get_frontend_base(request)
     try:
         # Multiple code/state/error parameters are not accepted.
         for key in ('state', 'code', 'error'):

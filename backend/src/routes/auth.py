@@ -84,13 +84,17 @@ def validate_csrf(request: Request) -> None:
     header = request.headers.get("x-csrf-token", "")
     origin = request.headers.get("origin", "")
     allowed_origins = {settings.frontend_url.rstrip("/")}
+    proto = request.headers.get("x-forwarded-proto") or request.url.scheme
+    host = request.headers.get("x-forwarded-host") or request.headers.get("host")
+    if host:
+        allowed_origins.add(f"{proto}://{host}".rstrip("/"))
+    allowed_origins.add(str(request.base_url).rstrip("/"))
     if settings.environment.lower() != "production":
         allowed_origins.update({
             "http://localhost:8000",
             "http://127.0.0.1:8000",
             "http://localhost:5173",
             "http://127.0.0.1:5173",
-            str(request.base_url).rstrip("/"),
         })
     if origin and origin.rstrip("/") not in allowed_origins:
         raise HTTPException(status_code=403, detail="Request origin is not allowed.")
