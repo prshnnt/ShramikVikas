@@ -146,7 +146,7 @@ export function WorkspaceBottomNav() {
         anchor="bottom"
         open={moreOpen}
         onClose={() => setMoreOpen(false)}
-        PaperProps={{
+        slotProps={{ paper: {
           sx: {
             backgroundColor: 'var(--glass-surface)',
             backdropFilter: 'blur(24px) saturate(160%)',
@@ -157,7 +157,7 @@ export function WorkspaceBottomNav() {
             px: 3,
             py: 3,
           },
-        }}
+        } }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
           <Typography variant="h3" sx={{ fontSize: '1.25rem', fontWeight: 600 }}>
@@ -211,9 +211,11 @@ export function WorkspaceBottomNav() {
                         </ListItemIcon>
                         <ListItemText
                           primary={item.label}
-                          primaryTypographyProps={{
-                            fontSize: '0.9375rem',
-                            fontWeight: isActive ? 600 : 500,
+                          slotProps={{
+                            primary: {
+                              fontSize: '0.9375rem',
+                              fontWeight: isActive ? 600 : 500,
+                            },
                           }}
                         />
                       </ListItemButton>

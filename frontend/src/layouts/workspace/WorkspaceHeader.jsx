@@ -14,7 +14,6 @@ import {
   Search,
   LightMode,
   DarkMode,
-  Translate,
   PersonOutlined,
   SettingsOutlined,
   HelpOutlined,
@@ -27,9 +26,10 @@ import { useLocale, useTheme } from '../../hooks/usePreferences';
 import { useAuth } from '../../app/providers/authContext';
 import { useIntelligenceData } from '../../features/real-intelligence/dataContext';
 import { tokens } from '../../theme';
+import { LanguageSwitcher } from '../../components/navigation/ProductPreferences';
 
 export function WorkspaceHeader({ page, onSearch }) {
-  const { t, locale, setLocale } = useLocale();
+  const { t, locale } = useLocale();
   const { resolved, setPreference } = useTheme();
   const { user, signOut } = useAuth();
   const { mode } = useIntelligenceData();
@@ -37,10 +37,6 @@ export function WorkspaceHeader({ page, onSearch }) {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
-
-  const toggleLanguage = () => {
-    setLocale(locale === 'en-IN' ? 'hi-IN' : 'en-IN');
-  };
 
   const toggleTheme = () => {
     setPreference(resolved === 'dark' ? 'light' : 'dark');
@@ -98,16 +94,21 @@ export function WorkspaceHeader({ page, onSearch }) {
           startIcon={<Search sx={{ fontSize: 18, color: 'var(--accent-text)' }} />}
           endIcon={
             <Box
-              component="span"
+              component="kbd"
               sx={{
                 fontSize: '0.6875rem',
                 fontWeight: 600,
                 px: 0.8,
                 py: 0.2,
                 borderRadius: '4px',
-                backgroundColor: 'rgba(17, 24, 39, 0.08)',
+                backgroundColor: 'var(--bg-surface)',
+                border: '1px solid var(--border-subtle)',
                 color: 'var(--text-meta)',
                 ml: 1,
+                fontFamily: 'inherit',
+                lineHeight: 1.2,
+                display: 'inline-flex',
+                alignItems: 'center',
               }}
             >
               Ctrl K
@@ -115,7 +116,7 @@ export function WorkspaceHeader({ page, onSearch }) {
           }
           sx={{
             borderRadius: tokens.radius.pill,
-            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+            backgroundColor: 'var(--bg-subtle)',
             border: '1px solid var(--border-subtle)',
             color: 'var(--text-secondary)',
             px: 2,
@@ -123,9 +124,11 @@ export function WorkspaceHeader({ page, onSearch }) {
             fontSize: '0.875rem',
             fontWeight: 500,
             textTransform: 'none',
+            transition: 'all 150ms ease',
             '&:hover': {
-              backgroundColor: 'var(--bg-surface)',
+              backgroundColor: 'var(--bg-hover)',
               borderColor: 'var(--accent-text)',
+              color: 'var(--text-primary)',
             },
           }}
         >
@@ -140,7 +143,7 @@ export function WorkspaceHeader({ page, onSearch }) {
             display: { xs: 'none', sm: 'inline-flex' },
             fontSize: '0.75rem',
             fontWeight: 600,
-            backgroundColor: 'rgba(15, 118, 110, 0.1)',
+            backgroundColor: 'var(--status-undersupply-surface)',
             color: 'var(--status-undersupply-text)',
           }}
         />
@@ -149,21 +152,7 @@ export function WorkspaceHeader({ page, onSearch }) {
       {/* Right: Preferences & Account */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         {/* Language switcher */}
-        <Button
-          size="small"
-          onClick={toggleLanguage}
-          aria-label={`Switch language. Current: ${locale === 'en-IN' ? 'English' : 'हिन्दी'}`}
-          startIcon={<Translate sx={{ fontSize: '1rem !important' }} />}
-          sx={{
-            borderRadius: tokens.radius.pill,
-            color: 'var(--text-primary)',
-            fontSize: '0.8125rem',
-            px: 1.5,
-            py: 0.5,
-          }}
-        >
-          {locale === 'en-IN' ? 'हिन्दी' : 'English'}
-        </Button>
+        <LanguageSwitcher />
 
         {/* Theme toggle */}
         <Tooltip title={resolved === 'dark' ? 'Light mode' : 'Dark mode'}>
@@ -212,7 +201,7 @@ export function WorkspaceHeader({ page, onSearch }) {
               anchorEl={anchorEl}
               open={openMenu}
               onClose={handleMenuClose}
-              PaperProps={{
+              slotProps={{ paper: {
                 sx: {
                   width: 240,
                   backgroundColor: 'var(--glass-surface)',
@@ -224,7 +213,7 @@ export function WorkspaceHeader({ page, onSearch }) {
                   mt: 1,
                   p: 1,
                 },
-              }}
+              } }}
             >
               <Box sx={{ px: 2, py: 1.2 }}>
                 <Typography sx={{ fontWeight: 600, fontSize: '0.9375rem', color: 'var(--text-primary)' }}>
@@ -251,7 +240,7 @@ export function WorkspaceHeader({ page, onSearch }) {
                 onClick={handleMenuClose}
                 sx={{ borderRadius: '8px', gap: 1.5, fontSize: '0.875rem' }}
               >
-                <PersonOutline fontSize="small" sx={{ color: 'var(--accent-text)' }} />
+                <PersonOutlined fontSize="small" sx={{ color: 'var(--accent-text)' }} />
                 {t('account.profile') || 'Profile'}
               </MenuItem>
               <MenuItem
@@ -269,7 +258,7 @@ export function WorkspaceHeader({ page, onSearch }) {
                 onClick={handleMenuClose}
                 sx={{ borderRadius: '8px', gap: 1.5, fontSize: '0.875rem' }}
               >
-                <HelpOutline fontSize="small" sx={{ color: 'var(--accent-text)' }} />
+                <HelpOutlined fontSize="small" sx={{ color: 'var(--accent-text)' }} />
                 {t('account.help') || 'Help & Glossary'}
               </MenuItem>
 

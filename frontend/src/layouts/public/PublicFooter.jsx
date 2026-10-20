@@ -57,7 +57,7 @@ export function PublicFooter() {
       >
         <Grid container spacing={{ xs: 4, md: 6 }}>
           {/* Brand & Description */}
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Brand full />
             <Typography
               variant="body2"
@@ -88,7 +88,7 @@ export function PublicFooter() {
           </Grid>
 
           {/* Platform Links */}
-          <Grid item xs={6} sm={4} md={2.5}>
+          <Grid size={{ xs: 6, sm: 4, md: 2.5 }}>
             <Typography
               variant="subtitle2"
               sx={{
@@ -124,7 +124,7 @@ export function PublicFooter() {
           </Grid>
 
           {/* Resources Links */}
-          <Grid item xs={6} sm={4} md={2.5}>
+          <Grid size={{ xs: 6, sm: 4, md: 2.5 }}>
             <Typography
               variant="subtitle2"
               sx={{
@@ -160,7 +160,7 @@ export function PublicFooter() {
           </Grid>
 
           {/* Product & Connect Links */}
-          <Grid item xs={12} sm={4} md={3}>
+          <Grid size={{ xs: 12, sm: 4, md: 3 }}>
             <Typography
               variant="subtitle2"
               sx={{

@@ -60,3 +60,32 @@ Rebuilt the entire frontend user interface in a **glass-and-coral design system*
    - Every status badge is guaranteed to have both an icon and a word.
    - Unavailable states show dashed outline with "Not published" and a one-line reason.
    - Figures show official source and release date.
+
+---
+
+## Layout fix pass
+
+| Area | Problem | Fix |
+| :--- | :--- | :--- |
+| Routing (`app/routes/AppRoutes.jsx`) | Routes still rendered the legacy `components/layout` shell, so the new glass sidebar, header and public navbar were never shown. | Routes now use `layouts/workspace/WorkspaceLayout` (`AppShell`) and `layouts/public/PublicLayout`. The unused legacy `components/layout` folder was removed. |
+| Hero floating cards (`components/landing/HeroSection.jsx`, `styles/global.css`) | The `floatDrift` keyframe animated `transform`, which cancelled each card's tilt, so the cards drifted flat. | The tilt now uses the CSS `rotate` property and the keyframe animates `translate`, so both work together. |
+| MUI deprecations | `PaperProps` and `InputProps` on Drawer, Dialog and TextField are deprecated in MUI v9. | Replaced with `slotProps.paper` and `slotProps.input` in the sidebar, header, bottom navigation, public navbar and command palette. |
+
+Verified: every source file compiles, every relative import resolves, and every named import refers to an export that exists.
+Not verified in this pass: a running build in a browser. Run `npm install`, `npm run build`, and `npm run dev` before release.
+
+---
+
+## Sidebar and language pass
+
+| Area | Change |
+| :--- | :--- |
+| Workspace sidebar (`layouts/workspace/WorkspaceSidebar.jsx`) | Fixed 248 px width, always expanded, labels always visible. Hover-to-expand, pin button and collapsed icon-only state removed. Content offset is always 248 px on desktop. |
+| Workspace layout (`layouts/workspace/WorkspaceLayout.jsx`) | Pin state and `localStorage` key removed. Content margin is now a constant `SIDEBAR_WIDTH`. |
+| Languages (`app/i18n/config.js`, `app/i18n/locales/regional.js`, `app/i18n/locales/shell.js`) | Eight languages: English, Hindi, and six new ones: Bengali (bn), Tamil (ta), Telugu (te), Marathi (mr), Gujarati (gu), Kannada (kn). Keys missing in a language fall back to English. |
+| Language switcher (public navbar, workspace header) | The two-way Hindi/English buttons are replaced by the shared language picker, which lists every locale in its own script. |
+| Fonts (`styles/global.css`, `theme/createAppTheme.js`, `package.json`) | Noto Sans Bengali, Tamil, Telugu, Gujarati and Kannada added via @fontsource. Marathi uses Noto Sans Devanagari. Each language sets its own font stack and line height. |
+| Sidebar labels | Group headings (Overview, Data, Signals, Planning, Account) now have translations, so they no longer show raw keys. |
+
+Translation status: the shell, navigation, search, account and core workspace labels are translated for the six new languages. All other pages fall back to English until they are translated. The regional strings are first drafts and need review by a native speaker.
+Run `npm install` to update `package-lock.json` for the new font packages.

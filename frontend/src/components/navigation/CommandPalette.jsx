@@ -62,17 +62,19 @@ export function CommandPalette({ onClose }) {
       maxWidth="sm"
       fullWidth
       aria-labelledby="command-palette-title"
-      PaperProps={{
-        sx: {
-          backgroundColor: 'var(--glass-surface)',
-          backdropFilter: 'blur(24px) saturate(150%)',
-          WebkitBackdropFilter: 'blur(24px) saturate(150%)',
-          border: '1px solid var(--glass-border)',
-          borderRadius: tokens.radius.card,
-          boxShadow: '0 24px 64px rgba(0, 0, 0, 0.25)',
-          overflow: 'hidden',
-          p: 0,
-        },
+      slotProps={{
+        paper: {
+          sx: {
+            backgroundColor: 'var(--glass-surface)',
+            backdropFilter: 'blur(24px) saturate(150%)',
+            WebkitBackdropFilter: 'blur(24px) saturate(150%)',
+            border: '1px solid var(--glass-border)',
+            borderRadius: tokens.radius.card,
+            boxShadow: '0 24px 64px rgba(0, 0, 0, 0.25)',
+            overflow: 'hidden',
+            p: 0,
+          },
+        }
       }}
     >
       <DialogContent sx={{ p: 2 }}>
@@ -87,30 +89,55 @@ export function CommandPalette({ onClose }) {
           groupBy={(option) => option.category}
           getOptionLabel={(option) => option.label || ''}
           onChange={handleSelect}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              autoFocus
-              placeholder={t('search.placeholder') || 'Search pages, states, industries (Ctrl+K)...'}
-              aria-label={t('search.pages') || 'Search command palette'}
-              variant="outlined"
-              InputProps={{
-                ...params.InputProps,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search sx={{ color: 'var(--accent-text)', fontSize: 22 }} />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: tokens.radius.input,
-                  backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                  fontSize: '1.0625rem',
-                },
-              }}
-            />
-          )}
+          renderInput={(params) => {
+            const { InputProps, ...restParams } = params;
+            return (
+              <TextField
+                {...restParams}
+                autoFocus
+                placeholder={t('search.placeholder') || 'Search pages, states, industries (Ctrl+K)...'}
+                aria-label={t('search.pages') || 'Search command palette'}
+                variant="outlined"
+                InputProps={{
+                  ...InputProps,
+                  startAdornment: (
+                    <>
+                      <InputAdornment position="start">
+                        <Search sx={{ color: 'var(--accent-text)', fontSize: 22 }} />
+                      </InputAdornment>
+                      {InputProps.startAdornment}
+                    </>
+                  ),
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: tokens.radius.input,
+                    backgroundColor: 'var(--bg-subtle)',
+                    fontSize: '1.0625rem',
+                    color: 'var(--text-primary)',
+                    '& fieldset': {
+                      borderColor: 'var(--border-subtle)',
+                      transition: 'border-color 150ms ease',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'var(--accent-text)',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'var(--focus-ring)',
+                      borderWidth: '1.5px',
+                    },
+                  },
+                  '& .MuiInputBase-input': {
+                    color: 'var(--text-primary)',
+                    '&::placeholder': {
+                      color: 'var(--text-meta)',
+                      opacity: 1,
+                    },
+                  },
+                }}
+              />
+            );
+          }}
           renderOption={(props, option) => {
             const { key, ...otherProps } = props;
             return (
@@ -128,7 +155,7 @@ export function CommandPalette({ onClose }) {
                   my: 0.3,
                   cursor: 'pointer',
                   '&:hover, &.Mui-focused': {
-                    backgroundColor: 'rgba(201, 55, 42, 0.08) !important',
+                    backgroundColor: 'var(--accent-subtle) !important',
                   },
                 }}
               >

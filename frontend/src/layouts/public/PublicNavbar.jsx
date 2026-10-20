@@ -12,16 +12,17 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme as useMuiTheme } from '@mui/material/styles';
-import { Menu as MenuIcon, Close as CloseIcon, ArrowForward, LightMode, DarkMode, Translate } from '@mui/icons-material';
+import { Menu as MenuIcon, Close as CloseIcon, ArrowForward, LightMode, DarkMode } from '@mui/icons-material';
 
 import { useLocale, useTheme } from '../../hooks/usePreferences';
 import { useAuth } from '../../app/providers/authContext';
 import { Brand } from '../../components/navigation/Brand';
 import { getPublicNavigation } from '../../app/config/publicNavigation';
 import { tokens } from '../../theme';
+import { LanguageSwitcher } from '../../components/navigation/ProductPreferences';
 
 export function PublicNavbar() {
-  const { t, locale, setLocale } = useLocale();
+  const { t, locale } = useLocale();
   const { preference, resolved, setPreference } = useTheme();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -30,10 +31,6 @@ export function PublicNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navItems = getPublicNavigation(t);
-
-  const toggleLanguage = () => {
-    setLocale(locale === 'en-IN' ? 'hi-IN' : 'en-IN');
-  };
 
   const toggleTheme = () => {
     setPreference(resolved === 'dark' ? 'light' : 'dark');
@@ -117,26 +114,7 @@ export function PublicNavbar() {
             />
 
             {/* Language switch button */}
-            <Button
-              size="small"
-              onClick={toggleLanguage}
-              aria-label={`Switch language. Current: ${locale === 'en-IN' ? 'English' : 'हिन्दी'}`}
-              sx={{
-                minWidth: 'auto',
-                px: 1.5,
-                py: 0.5,
-                fontSize: '0.8125rem',
-                color: 'var(--text-primary)',
-                borderRadius: tokens.radius.pill,
-                backgroundColor: 'rgba(17, 24, 39, 0.04)',
-                '&:hover': {
-                  backgroundColor: 'rgba(17, 24, 39, 0.08)',
-                },
-              }}
-              startIcon={<Translate sx={{ fontSize: '1rem !important' }} />}
-            >
-              {locale === 'en-IN' ? 'हिन्दी' : 'EN'}
-            </Button>
+            <LanguageSwitcher />
 
             {/* Theme toggle */}
             <IconButton
@@ -197,23 +175,7 @@ export function PublicNavbar() {
         ) : (
           /* Mobile navigation button */
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Button
-              size="small"
-              onClick={toggleLanguage}
-              aria-label="Toggle language"
-              sx={{
-                minWidth: 'auto',
-                px: 1.2,
-                py: 0.4,
-                fontSize: '0.8125rem',
-                color: 'var(--text-primary)',
-                borderRadius: tokens.radius.pill,
-                backgroundColor: 'var(--glass-surface)',
-                border: '1px solid var(--glass-border)',
-              }}
-            >
-              {locale === 'en-IN' ? 'हिन्दी' : 'EN'}
-            </Button>
+            <LanguageSwitcher />
             <IconButton
               size="small"
               onClick={toggleTheme}
@@ -246,7 +208,7 @@ export function PublicNavbar() {
         anchor="top"
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
-        PaperProps={{
+        slotProps={{ paper: {
           sx: {
             backgroundColor: 'var(--glass-surface)',
             backdropFilter: 'blur(24px) saturate(160%)',
@@ -257,7 +219,7 @@ export function PublicNavbar() {
             py: 3,
             boxShadow: '0 16px 40px rgba(0,0,0,0.2)',
           },
-        }}
+        } }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
           <Brand />
@@ -285,10 +247,12 @@ export function PublicNavbar() {
               >
                 <ListItemText
                   primary={item.label}
-                  primaryTypographyProps={{
-                    fontWeight: 500,
-                    fontSize: '1.0625rem',
-                    color: 'var(--text-primary)',
+                  slotProps={{
+                    primary: {
+                      fontWeight: 500,
+                      fontSize: '1.0625rem',
+                      color: 'var(--text-primary)',
+                    },
                   }}
                 />
               </ListItemButton>

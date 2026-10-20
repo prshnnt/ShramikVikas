@@ -8,7 +8,7 @@ import { useLocale } from '../../hooks/usePreferences';
 import { getNavigation, getMissingPage } from '../../app/config/navigation';
 import { DataProvider } from '../../features/real-intelligence/DataProvider';
 import { useIntelligenceData } from '../../features/real-intelligence/dataContext';
-import { WorkspaceSidebar } from './WorkspaceSidebar';
+import { WorkspaceSidebar, SIDEBAR_WIDTH } from './WorkspaceSidebar';
 import { WorkspaceHeader } from './WorkspaceHeader';
 import { WorkspaceBottomNav } from './WorkspaceBottomNav';
 import { CommandPalette } from '../../components/navigation/CommandPalette';
@@ -38,28 +38,8 @@ function WorkspaceShell() {
   const isDesktop = useMediaQuery('(min-width: 900px)');
 
   const [overlay, setOverlay] = useState(null);
-  const [pinned, setPinned] = useState(() => {
-    try {
-      return localStorage.getItem('shramikvikas.sidebar.pinned') === 'true';
-    } catch {
-      return false;
-    }
-  });
-
   const heading = useRef(null);
   const previousPath = useRef(location.pathname);
-
-  const togglePin = () => {
-    setPinned((prev) => {
-      const next = !prev;
-      try {
-        localStorage.setItem('shramikvikas.sidebar.pinned', String(next));
-      } catch {
-        // Ignored
-      }
-      return next;
-    });
-  };
 
   const accountRoute =
     location.pathname === '/profile'
@@ -128,7 +108,7 @@ function WorkspaceShell() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  const contentMarginLeft = isDesktop ? (pinned ? '248px' : '72px') : 0;
+  const contentMarginLeft = isDesktop ? `${SIDEBAR_WIDTH}px` : 0;
 
   return (
     <Box
@@ -144,15 +124,15 @@ function WorkspaceShell() {
         {t('common.skip')}
       </a>
 
-      {/* Desktop Glass Sidebar (collapsed 72px, expands on hover to 248px overlay, pinnable) */}
-      {isDesktop && <WorkspaceSidebar pinned={pinned} onTogglePin={togglePin} />}
+      {/* Desktop glass sidebar: fixed width, labels always visible */}
+      {isDesktop && <WorkspaceSidebar />}
 
       {/* Main Container */}
       <Box
         sx={{
           flex: 1,
           ml: contentMarginLeft,
-          transition: 'margin-left 180ms cubic-bezier(0.2, 0, 0, 1)',
+          
           display: 'flex',
           flexDirection: 'column',
           minHeight: '100vh',

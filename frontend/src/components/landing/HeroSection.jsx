@@ -110,7 +110,7 @@ export function HeroSection() {
             left: card.left,
             right: card.right,
             zIndex: 2,
-            transform: `rotate(${card.rotate})`,
+            rotate: card.rotate,
             animation: 'floatDrift 6s ease-in-out infinite',
             animationDelay: card.delay,
             filter: card.outer ? 'blur(1px) opacity(0.72)' : 'none',

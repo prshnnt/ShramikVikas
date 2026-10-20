@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Route, Routes, Outlet, Navigate } from "react-router-dom";
-import { AppShell } from "../../components/layout/AppShell";
-import { PublicLayout } from "../../components/layout/PublicLayout";
+import { AppShell } from "../../layouts/workspace/WorkspaceLayout";
+import { PublicLayout } from "../../layouts/public/PublicLayout";
 import { NotFoundPage } from "../../pages/CapabilityPage";
 import { HomePage } from "../../pages/HomePage";
 import { ProductPage } from "../../pages/ProductPage";

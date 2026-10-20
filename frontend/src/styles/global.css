@@ -7,6 +7,23 @@
 @import "@fontsource/noto-sans-devanagari/600.css";
 @import "@fontsource/noto-sans-devanagari/700.css";
 
+/* ── Indic scripts (fonts load only for the glyphs on the page: unicode-range) ── */
+@import "@fontsource/noto-sans-bengali/400.css";
+@import "@fontsource/noto-sans-bengali/600.css";
+@import "@fontsource/noto-sans-bengali/700.css";
+@import "@fontsource/noto-sans-tamil/400.css";
+@import "@fontsource/noto-sans-tamil/600.css";
+@import "@fontsource/noto-sans-tamil/700.css";
+@import "@fontsource/noto-sans-telugu/400.css";
+@import "@fontsource/noto-sans-telugu/600.css";
+@import "@fontsource/noto-sans-telugu/700.css";
+@import "@fontsource/noto-sans-gujarati/400.css";
+@import "@fontsource/noto-sans-gujarati/600.css";
+@import "@fontsource/noto-sans-gujarati/700.css";
+@import "@fontsource/noto-sans-kannada/400.css";
+@import "@fontsource/noto-sans-kannada/600.css";
+@import "@fontsource/noto-sans-kannada/700.css";
+
 /* ── Reset and base ──────────────────────────────────────────────────── */
 * { box-sizing: border-box; }
 html {
@@ -123,12 +140,13 @@ kbd {
 }
 
 /* ── Floating drift animation for hero cards ─────────────────────────── */
+/* Animates the `translate` property so it does not cancel the card tilt (`rotate`). */
 @keyframes floatDrift {
   0%, 100% {
-    transform: translateY(0px);
+    translate: 0 0;
   }
   50% {
-    transform: translateY(-6px);
+    translate: 0 -6px;
   }
 }
 
@@ -179,3 +197,18 @@ html[lang="hi"] body :is(p, span, div, a, button) {
 html[lang="hi"] * {
   text-rendering: optimizeLegibility;
 }
+
+/* ── Regional scripts: font stack and line height per language ───────── */
+html[lang="bn"] { --font-family: "Noto Sans Bengali", "Poppins", sans-serif; --font-display: "Noto Sans Bengali", "Poppins", sans-serif; }
+html[lang="ta"] { --font-family: "Noto Sans Tamil", "Poppins", sans-serif; --font-display: "Noto Sans Tamil", "Poppins", sans-serif; }
+html[lang="te"] { --font-family: "Noto Sans Telugu", "Poppins", sans-serif; --font-display: "Noto Sans Telugu", "Poppins", sans-serif; }
+html[lang="gu"] { --font-family: "Noto Sans Gujarati", "Poppins", sans-serif; --font-display: "Noto Sans Gujarati", "Poppins", sans-serif; }
+html[lang="kn"] { --font-family: "Noto Sans Kannada", "Poppins", sans-serif; --font-display: "Noto Sans Kannada", "Poppins", sans-serif; }
+html[lang="mr"] { --font-family: "Noto Sans Devanagari", "Poppins", sans-serif; --font-display: "Noto Sans Devanagari", "Poppins", sans-serif; }
+
+html:is([lang="bn"], [lang="ta"], [lang="te"], [lang="gu"], [lang="kn"], [lang="mr"]) body { line-height: 1.75; }
+html:is([lang="bn"], [lang="ta"], [lang="te"], [lang="gu"], [lang="kn"], [lang="mr"]) :is(h1, h2, h3, h4) {
+  letter-spacing: normal;
+  line-height: 1.35;
+}
+html[lang="mr"] h1 { line-height: 1.3; }

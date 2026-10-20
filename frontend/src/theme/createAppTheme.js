@@ -1,14 +1,14 @@
 import { createTheme } from '@mui/material/styles';
 import { tokens } from './tokens';
+import { fontStackFor } from '../app/i18n/config';
 
 export function createAppTheme(mode = 'light', locale = 'en-IN') {
   const isDark = mode === 'dark';
-  const isHindi = locale === 'hi-IN';
+  // Any non-English locale uses a script-specific font and taller line heights.
+  const indic = locale !== 'en-IN';
   const t = isDark ? tokens.dark : tokens.light;
 
-  const fontFamily = isHindi
-    ? '"Noto Sans Devanagari", "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-    : '"Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  const fontFamily = fontStackFor(locale);
 
   return createTheme({
     palette: {
@@ -41,39 +41,39 @@ export function createAppTheme(mode = 'light', locale = 'en-IN') {
         fontFamily,
         fontSize: 'clamp(2.5rem, 5vw, 3.75rem)', // 40px - 60px
         fontWeight: 600,
-        lineHeight: isHindi ? 1.3 : 1.1,
-        letterSpacing: isHindi ? 'normal' : '-0.02em',
+        lineHeight: indic ? 1.3 : 1.1,
+        letterSpacing: indic ? 'normal' : '-0.02em',
       },
       h1: {
         fontFamily,
         fontSize: 'clamp(2.25rem, 4vw, 3.25rem)',
         fontWeight: 600,
-        lineHeight: isHindi ? 1.3 : 1.15,
-        letterSpacing: isHindi ? 'normal' : '-0.02em',
+        lineHeight: indic ? 1.3 : 1.15,
+        letterSpacing: indic ? 'normal' : '-0.02em',
       },
       h2: {
         fontFamily,
         fontSize: 'clamp(1.75rem, 3vw, 2.25rem)', // 36 - 40px
         fontWeight: 600,
-        lineHeight: isHindi ? 1.35 : 1.25,
-        letterSpacing: isHindi ? 'normal' : '-0.01em',
+        lineHeight: indic ? 1.35 : 1.25,
+        letterSpacing: indic ? 'normal' : '-0.01em',
       },
       h3: {
         fontFamily,
         fontSize: '1.4rem', // 22 - 24px
         fontWeight: 600,
-        lineHeight: isHindi ? 1.4 : 1.3,
+        lineHeight: indic ? 1.4 : 1.3,
       },
       body1: {
         fontFamily,
         fontSize: '1.0625rem', // 17px
-        lineHeight: isHindi ? 1.8 : 1.6,
+        lineHeight: indic ? 1.8 : 1.6,
         fontWeight: 400,
       },
       body2: {
         fontFamily,
         fontSize: '0.9375rem', // 15px
-        lineHeight: isHindi ? 1.75 : 1.55,
+        lineHeight: indic ? 1.75 : 1.55,
       },
       button: {
         fontFamily,

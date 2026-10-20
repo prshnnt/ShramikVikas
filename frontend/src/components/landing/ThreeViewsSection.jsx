@@ -204,9 +204,9 @@ export function ThreeViewsSection() {
             p: { xs: 3, sm: 4, md: 5 },
           }}
         >
-          <Grid container spacing={4} alignItems="center">
+          <Grid container spacing={4} sx={{ alignItems: 'center' }}>
             {/* Left Content */}
-            <Grid item xs={12} md={7}>
+            <Grid size={{ xs: 12, md: 7 }}>
               {/* Badge & Status chip with Icon and Word */}
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2, flexWrap: 'wrap' }}>
                 <Chip
@@ -341,7 +341,7 @@ export function ThreeViewsSection() {
             </Grid>
 
             {/* Right KPI Panel */}
-            <Grid item xs={12} md={5}>
+            <Grid size={{ xs: 12, md: 5 }}>
               <Box
                 sx={{
                   display: 'flex',
@@ -349,7 +349,7 @@ export function ThreeViewsSection() {
                   gap: 2.5,
                   p: { xs: 2.5, sm: 3 },
                   borderRadius: tokens.radius.input,
-                  backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                  backgroundColor: 'var(--bg-subtle)',
                   border: '1px solid var(--glass-border)',
                 }}
               >
