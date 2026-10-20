@@ -8,5 +8,12 @@ export const locales = {
 export function parseLocale(value) { return value === "hi-IN" ? "hi-IN" : "en-IN"; }
 const messages = { "en-IN": en, "hi-IN": hi };
 export function message(locale, key, values = {}) {
-    return messages[locale][key].replace(/\{(\w+)\}/g, (placeholder, name) => String(values[name] ?? placeholder));
+    if (!key) return "";
+    const activeMessages = messages[locale] || messages["en-IN"] || {};
+    const fallbackMessages = messages["en-IN"] || {};
+    const template = activeMessages[key] ?? fallbackMessages[key] ?? key;
+    if (typeof template !== "string") {
+        return String(template ?? key ?? "");
+    }
+    return template.replace(/\{(\w+)\}/g, (placeholder, name) => String(values?.[name] ?? placeholder));
 }

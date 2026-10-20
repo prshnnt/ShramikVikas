@@ -474,6 +474,8 @@ export const hi = {
     "modules.availabilityDetail": "श्रम संकेतक, उद्योग संदर्भ और प्रशिक्षण अवलोकन जुड़े हैं। विश्वसनीय डेटा और पद्धति स्थापित होने तक कौशल मांग, अंतर और पूर्वानुमान अनुपलब्ध हैं।",
     "workspacePreview.scope": "भारत / पूर्वावलोकन",
     "common.demand": "माँग",
+    "common.supply": "आपूर्ति",
+    "common.skillGaps": "कौशल अंतराल",
     "common.reports": "रिपोर्ट",
     "workspace.q2025q1": "तिमाही 1, 2025",
     "workspace.q2025q2": "तिमाही 2, 2025",

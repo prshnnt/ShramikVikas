@@ -16,14 +16,19 @@ const fs = require('fs');
 async function runTests() {
   console.log('🚀 Starting ShramikVikas Glass & Coral Playwright verification suite...');
 
-  // Launch browser in headless mode
-  const browser = await chromium.launch({ headless: true });
+  // Launch browser with system Edge or Chromium
+  const browser = await chromium.launch({ headless: true, channel: 'msedge' });
   const context = await browser.newContext({
     viewport: { width: 1280, height: 800 },
   });
   const page = await context.newPage();
+  const pageErrors = [];
+  page.on('pageerror', (err) => {
+    console.error('  [Browser PageError]:', err.message);
+    pageErrors.push(err.message);
+  });
 
-  const baseUrl = process.env.TEST_URL || 'http://localhost:5173';
+  const baseUrl = process.env.TEST_URL || 'http://127.0.0.1:8000';
   console.log(`🌐 Testing target URL: ${baseUrl}`);
 
   let passed = 0;
@@ -173,6 +178,9 @@ async function runTests() {
     const bottomNav = page.locator('.MuiBottomNavigation-root, nav[class*="bottom"]').first();
     const hasBottomNav = await bottomNav.isVisible();
     assert(hasBottomNav, 'Glass bottom navigation bar is visible on mobile (<900px)');
+
+    // 8. Zero Uncaught Browser Errors
+    assert(pageErrors.length === 0, `Zero unhandled browser errors occurred (Got: ${pageErrors.join(' | ')})`);
 
   } catch (error) {
     console.error('💥 Test execution error:', error);

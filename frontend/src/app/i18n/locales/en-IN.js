@@ -470,6 +470,8 @@ export const en = {
     "modules.availabilityDetail": "Labour indicators, industry references and training observations are connected. Skill demand, gaps and forecasting remain unavailable until defensible data and methods are established.",
     "workspacePreview.scope": "INDIA / PREVIEW",
     "common.demand": "Demand",
+    "common.supply": "Supply",
+    "common.skillGaps": "Skill Gaps",
     "common.reports": "Reports",
     "workspace.q2025q1": "Q1 2025",
     "workspace.q2025q2": "Q2 2025",
