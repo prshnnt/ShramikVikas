@@ -31,7 +31,16 @@ export function ForecastIntelligence() {
     const unit = s?.unit === 'percent' ? '%' : s?.unit === 'persons' ? t('forecast.persons') : s?.unit === 'centres' ? t('forecast.centres') : t('forecast.vacancies');
     const source = coverage?.sources.find(x => x.source_id === latest?.source_id);
     return <section className="forecast-intelligence" data-query={query}>
-    <header className="forecast-header real-section-heading"><p className="section-kicker">{t('real.banner')} · {t('forecast.gate')}</p><h2>{t('forecast.title')}</h2><p>{t('forecast.intro')}</p></header>
+    <header className="forecast-header real-section-heading">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+        <p className="section-kicker" style={{ margin: 0 }}>{t('real.banner')} · {t('forecast.gate')}</p>
+        <span style={{ fontSize: '0.75rem', fontWeight: 600, padding: '2px 10px', borderRadius: '999px', backgroundColor: 'rgba(124, 58, 237, 0.12)', color: '#7C3AED', border: '1px solid rgba(124, 58, 237, 0.3)' }}>
+          Indicative · Uncertainty Bands
+        </span>
+      </div>
+      <h2>{t('forecast.title')}</h2>
+      <p>{t('forecast.intro')}</p>
+    </header>
     {coverage && <div className="real-filter-bar forecast-filters">
       <label>{t('forecast.family')}<select aria-label={t('forecast.family')} value={family} onChange={e => change('family', e.target.value)}>{coverage.families.map(f => <option key={f.family} value={f.family}>{t(`forecast.${f.family}`)}</option>)}</select></label>
       <label>{t('forecast.metric')}<select aria-label={t('forecast.metric')} value={metric} onChange={e => change('metric', e.target.value)}>{group?.metrics.map(m => <option key={m} value={m}>{metricKeys[m] ? t(metricKeys[m]) : m}</option>)}</select></label>

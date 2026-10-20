@@ -39,6 +39,13 @@ export function GapIntelligence() {
         return null; return <section className="gap-calculation" aria-label={t('gap.value')}><p className="gap-eyebrow">{t('gap.derived')}</p><dl>{[['gap.demand', nf.format(a.demand.value)], ['gap.supply', nf.format(a.supply.value)], ['gap.value', nf.format(a.gap_value)], ['gap.coverage', a.coverage_ratio === null ? t('gap.undefinedRatio') : new Intl.NumberFormat(locale, { style: 'percent', maximumFractionDigits: 2 }).format(a.coverage_ratio)]].map(([key, value]) => <div key={key}><dt>{t(key)}</dt><dd>{value}</dd></div>)}</dl><p>{label(a.gap_direction)} · {a.demand.unit}</p><p className="real-note">{t('gap.formula')}</p><p className="real-note">{t('gap.causalNote')}</p></section>; }
     return <div className="gap-intelligence" data-query={query} data-gap-state={state}>
     <header className="gap-heading"><p className="gap-eyebrow">{t('gap.kicker')}</p><h2>{t('gap.title')}</h2><p>{t('gap.intro')}</p></header>
+    <div className="gap-indicator-definition" style={{ padding: '14px 18px', borderRadius: '12px', backgroundColor: 'var(--glass-surface)', backdropFilter: 'blur(16px)', border: '1px solid var(--glass-border)', margin: '14px 0 20px', display: 'flex', alignItems: 'flex-start', gap: '12px', boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
+      <span style={{ color: 'var(--accent-text)', fontWeight: 'bold' }}>ℹ</span>
+      <div>
+        <strong style={{ color: 'var(--accent-text)', fontSize: '0.875rem' }}>{t('gap.indicatorTitle')}</strong>
+        <p style={{ margin: '4px 0 0', fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>{t('gap.indicatorDef')}</p>
+      </div>
+    </div>
     <div className="real-filter-bar gap-filters">
       <label>{t('gap.dimension')}<select aria-label={t('gap.dimension')} value={filters.get('dimension')} onChange={e => change('dimension', e.target.value)}>{['skill', 'occupation', 'industry', 'geography'].map(d => <option value={d} key={d}>{label(d)}</option>)}</select></label>
       <label>{t('real.region')}<select aria-label={t('real.region')} value={filters.get('geography_id') ?? ''} onChange={e => change('geography_id', e.target.value)}><option value="">{t('gap.allRegions')}</option>{coverage.options.geographies.map(g => <option value={g.geography_id} key={g.geography_id}>{g.name}</option>)}{filters.get('geography_id') && !coverage.options.geographies.some(g => g.geography_id === filters.get('geography_id')) && <option value={filters.get('geography_id')}>{t('real.unavailable')}</option>}</select></label>

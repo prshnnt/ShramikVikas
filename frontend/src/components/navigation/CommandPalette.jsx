@@ -1,57 +1,196 @@
-import { useLocale } from "../../hooks/usePreferences";
-import { useState, useId } from "react";
-import { useNavigate } from "react-router-dom";
-import { Search, CornerDownLeft, BrainCircuit, BriefcaseBusiness, Factory, MapPinned } from "lucide-react";
-import { getNavigation } from "../../app/config/navigation";
-import { Modal } from "../ui/Modal";
-import { industries, occupations, regions, skills } from "../../data/labourMarket";
-import { useIntelligenceData } from "../../features/real-intelligence/dataContext";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import InputAdornment from '@mui/material/InputAdornment';
+import Chip from '@mui/material/Chip';
+import { Search, ArrowForward, Layers, Place, Work, Factory } from '@mui/icons-material';
+
+import { useLocale } from '../../hooks/usePreferences';
+import { getNavigation } from '../../app/config/navigation';
+import { useIntelligenceData } from '../../features/real-intelligence/dataContext';
+import { tokens } from '../../theme';
+
 export function CommandPalette({ onClose }) {
-    const { t } = useLocale();
-    const { mode, catalog } = useIntelligenceData();
-    const navigation = getNavigation(t);
-    const navigate = useNavigate();
-    const [query, setQuery] = useState("");
-    const [active, setActive] = useState(0);
-    const listId = useId();
-    const needle = query.trim().toLocaleLowerCase();
-    const navigationMatches = navigation.filter(item => `${item.label} ${item.title}`.toLocaleLowerCase().includes(needle))
-        .map(item => ({ path: item.path, label: item.label, icon: item.icon, section: t("search.navigation") }));
-    const sampleMatches = import.meta.env.DEV && mode === "sample" && needle ? [
-        ...skills.map(item => ({ path: `/skills?skill=${item.id}`, label: t(item.nameKey), icon: BrainCircuit, section: t("common.skills") })),
-        ...occupations.map(item => ({ path: `/occupations?occupation=${item.id}`, label: t(item.nameKey), icon: BriefcaseBusiness, section: t("common.occupations") })),
-        ...industries.map(item => ({ path: `/industries?industry=${item.id}`, label: t(item.nameKey), icon: Factory, section: t("common.industries") })),
-        ...regions.map(item => ({ path: `/regions?region=${item.id}`, label: t(item.nameKey), icon: MapPinned, section: t("common.regions") })),
-    ].filter(item => item.label.toLocaleLowerCase().includes(needle)) : [];
-    const realMatches = needle ? [
-        ...(catalog?.regions.map(item => ({ path: `/regions?region=${item.region_id}`, label: item.name, icon: MapPinned, section: t("common.regions") })) || []),
-        ...(catalog?.industries.map(item => ({ path: `/industries?industry=${item.industry_id}`, label: `${item.nic_code} · ${item.name}`, icon: Factory, section: t("real.reference") })) || []),
-    ].filter(item => item.label.toLocaleLowerCase().includes(needle)).slice(0, 30) : [];
-    const entityMatches = mode === "sample" ? sampleMatches : realMatches;
-    const matches = [...navigationMatches, ...entityMatches];
-    function select(path) { onClose(); navigate(path + (mode === "sample" ? `${path.includes("?") ? "&" : "?"}data=sample` : "")); }
-    return <Modal title={t("search.title")} id="search-heading" onClose={onClose} className="command-palette">
-    <div className="search-input-wrap"><Search size={20} aria-hidden="true"/>
-      <input data-initial-focus aria-label={t("search.pages")} role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls={listId} aria-activedescendant={matches[active] ? `${listId}-${active}` : undefined} placeholder={t("search.placeholder")} value={query} onChange={(event) => { setQuery(event.target.value); setActive(0); }} onKeyDown={(event) => {
-            if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-                event.preventDefault();
-                if (matches.length)
-                    setActive((index) => (index + (event.key === "ArrowDown" ? 1 : -1) + matches.length) % matches.length);
-            }
-            if (event.key === "Enter" && matches[active]) {
-                event.preventDefault();
-                select(matches[active].path);
-            }
-        }}/>
-    </div>
-    <p className="search-disclosure">{mode === "real" ? t("real.searchNote") : needle ? t("workspace.searchEntities") : t("search.note")}</p>
-    <p className="eyebrow palette-label">{t("search.navigation")}</p>
-    <ul id={listId} role="listbox" aria-label={t("search.list")} className="command-results">
-      {matches.map(({ path, label, icon: Icon, section }, index) => <li key={path} id={`${listId}-${index}`} role="option" aria-selected={active === index} className={active === index ? "selected" : ""} onMouseDown={(event) => event.preventDefault()} onMouseMove={() => setActive(index)} onClick={() => select(path)}>
-        <Icon size={18} aria-hidden="true"/><span>{label}<small>{section}</small></span><CornerDownLeft size={16} aria-hidden="true"/>
-      </li>)}
-    </ul>
-    {matches.length === 0 && <p className="no-results" role="status">{needle ? t("workspace.searchNoResults") : t("search.empty")}</p>}
-    <div className="palette-footer"><span><kbd>↑</kbd> <kbd>↓</kbd> {t("search.move")}</span><span><kbd>Enter</kbd> {t("search.open")}</span><span><kbd>Esc</kbd> {t("search.close")}</span></div>
-  </Modal>;
+  const { t } = useLocale();
+  const navigate = useNavigate();
+  const { mode, catalog } = useIntelligenceData();
+  const navigation = getNavigation(t);
+
+  // Build searchable options list
+  const navOptions = navigation.map((item) => ({
+    label: item.label,
+    secondary: item.title,
+    path: item.path,
+    category: t('search.navigation') || 'Navigation',
+    icon: <Layers sx={{ fontSize: 18, color: 'var(--accent-text)' }} />,
+  }));
+
+  const regionOptions = (catalog?.regions || []).map((reg) => ({
+    label: reg.name,
+    secondary: reg.state_type || 'Region',
+    path: `/regions?region=${reg.region_id}`,
+    category: t('common.regions') || 'Regions',
+    icon: <Place sx={{ fontSize: 18, color: 'var(--status-undersupply-text)' }} />,
+  }));
+
+  const industryOptions = (catalog?.industries || []).slice(0, 40).map((ind) => ({
+    label: ind.name,
+    secondary: `NIC ${ind.nic_code}`,
+    path: `/industries?industry=${ind.industry_id}`,
+    category: t('common.industries') || 'Industries',
+    icon: <Factory sx={{ fontSize: 18, color: 'var(--status-oversupply-text)' }} />,
+  }));
+
+  const options = [...navOptions, ...regionOptions, ...industryOptions];
+
+  const handleSelect = (event, option) => {
+    if (option?.path) {
+      onClose();
+      navigate(option.path);
+    }
+  };
+
+  return (
+    <Dialog
+      open={true}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      aria-labelledby="command-palette-title"
+      PaperProps={{
+        sx: {
+          backgroundColor: 'var(--glass-surface)',
+          backdropFilter: 'blur(24px) saturate(150%)',
+          WebkitBackdropFilter: 'blur(24px) saturate(150%)',
+          border: '1px solid var(--glass-border)',
+          borderRadius: tokens.radius.card,
+          boxShadow: '0 24px 64px rgba(0, 0, 0, 0.25)',
+          overflow: 'hidden',
+          p: 0,
+        },
+      }}
+    >
+      <DialogContent sx={{ p: 2 }}>
+        <Typography id="command-palette-title" className="sr-only">
+          {t('search.title') || 'Command Palette'}
+        </Typography>
+
+        <Autocomplete
+          autoHighlight
+          openOnFocus
+          options={options}
+          groupBy={(option) => option.category}
+          getOptionLabel={(option) => option.label || ''}
+          onChange={handleSelect}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              autoFocus
+              placeholder={t('search.placeholder') || 'Search pages, states, industries (Ctrl+K)...'}
+              aria-label={t('search.pages') || 'Search command palette'}
+              variant="outlined"
+              InputProps={{
+                ...params.InputProps,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search sx={{ color: 'var(--accent-text)', fontSize: 22 }} />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: tokens.radius.input,
+                  backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                  fontSize: '1.0625rem',
+                },
+              }}
+            />
+          )}
+          renderOption={(props, option) => {
+            const { key, ...otherProps } = props;
+            return (
+              <Box
+                component="li"
+                key={key || option.path}
+                {...otherProps}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  px: 2,
+                  py: 1.2,
+                  borderRadius: '10px',
+                  my: 0.3,
+                  cursor: 'pointer',
+                  '&:hover, &.Mui-focused': {
+                    backgroundColor: 'rgba(201, 55, 42, 0.08) !important',
+                  },
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  {option.icon}
+                  <Box>
+                    <Typography sx={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                      {option.label}
+                    </Typography>
+                    {option.secondary && (
+                      <Typography sx={{ fontSize: '0.75rem', color: 'var(--text-meta)' }}>
+                        {option.secondary}
+                      </Typography>
+                    )}
+                  </Box>
+                </Box>
+                <ArrowForward sx={{ fontSize: 16, color: 'var(--text-meta)' }} />
+              </Box>
+            );
+          }}
+          sx={{
+            '& .MuiAutocomplete-paper': {
+              backgroundColor: 'transparent',
+              boxShadow: 'none',
+            },
+            '& .MuiAutocomplete-groupLabel': {
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              color: 'var(--text-meta)',
+              backgroundColor: 'transparent',
+              top: 0,
+            },
+          }}
+        />
+
+        {/* Footer shortcuts info */}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            pt: 2,
+            mt: 2,
+            borderTop: '1px solid var(--border-subtle)',
+            fontSize: '0.75rem',
+            color: 'var(--text-meta)',
+          }}
+        >
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <span><kbd>↑</kbd> <kbd>↓</kbd> {t('search.move') || 'Navigate'}</span>
+            <span><kbd>↵</kbd> {t('search.open') || 'Select'}</span>
+            <span><kbd>esc</kbd> {t('search.close') || 'Close'}</span>
+          </Box>
+          <Chip
+            size="small"
+            label="Command Palette"
+            sx={{ fontSize: '0.7rem', height: 20 }}
+          />
+        </Box>
+      </DialogContent>
+    </Dialog>
+  );
 }

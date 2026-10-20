@@ -1,156 +1,195 @@
-/* KaushalIQ tokens — light-first, bohemian warmth, terracotta accent.
-   DESIGN.md §3, §4, §5 — all components reference tokens, never hex values. */
+/* ShramikVikas Tokens — Glass and Coral Design System (English and Hindi)
+   Tokens reference Master Prompt specifications */
 
 /* ── Light theme (default) ─────────────────────────────────────────────── */
 :root {
   color-scheme: light;
 
   /* Surfaces */
-  --bg-canvas:  #FAF6EE;  /* warm linen */
-  --bg-surface: #FFFDF8;  /* cards, panels */
-  --bg-subtle:  #F3ECDF;  /* table headers, chips */
-  --bg-hover:   #EDE4D3;  /* hover rows, buttons */
+  --bg-canvas: #EEF0F3;
+  --bg-canvas-gradient: linear-gradient(180deg, #EEF0F3 0%, #E4E7EC 100%);
+  --bg-glow: radial-gradient(circle at 50% 35%, rgba(201, 55, 42, 0.18) 0%, rgba(238, 240, 243, 0) 70%);
+  --bg-surface: rgba(255, 255, 255, 0.72);
+  --bg-surface-solid: #FFFFFF;
+  --bg-subtle: rgba(255, 255, 255, 0.5);
+  --bg-hover: rgba(255, 255, 255, 0.88);
+
+  /* Glass recipe */
+  --glass-surface: rgba(255, 255, 255, 0.72);
+  --glass-surface-hover: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.75);
+  --glass-blur: blur(18px) saturate(140%);
+  --glass-shadow: 0 8px 32px 0 rgba(17, 24, 39, 0.06);
 
   /* Text */
-  --text-primary:   #2B2420;  /* espresso */
-  --text-secondary: #6B5E55;
-  --text-meta:      #72655C;  /* captions — AA on canvas */
+  --text-primary: #111827;
+  --text-secondary: #5B6270;
+  --text-meta: #6B7280;
 
   /* Borders */
-  --border-subtle:  #E4D9C8;
-  --border-control: #8A7C70;
+  --border-subtle: rgba(17, 24, 39, 0.08);
+  --border-control: rgba(17, 24, 39, 0.2);
 
-  /* Accent — terracotta */
-  --accent-fill:    #B5562E;
-  --accent-hover:   #9E4A26;
+  /* Accent — Coral Red */
+  --accent-fill: #C9372A;
+  --accent-hover: #A92B20;
   --accent-on-fill: #FFFFFF;
-  --accent-text:    #9E4A26;
-  --accent-subtle:  #F6E3D8;
+  --accent-text: #C9372A;
+  --accent-subtle: rgba(201, 55, 42, 0.12);
+  --accent-glow: rgba(201, 55, 42, 0.18);
+  --accent-secondary: #111827;
 
-  /* Focus — teal, stands apart from accent */
-  --focus-ring: #2F6F6A;
+  /* Focus ring */
+  --focus-ring: #C9372A;
 
-  /* Semantic */
-  --success-text:    #3E6B45;  --success-surface: #E3ECE1;
-  --warning-text:    #7A6A1F;  --warning-surface: #F5E9CC;
-  --danger-text:     #A23B2C;  --danger-surface:  #F7E1DC;
-  --info-text:       #2F6F6A;  --info-surface:    #E1EFEC;
+  /* Semantic status colours (with icons & words) */
+  --status-undersupply-text: #0F766E;
+  --status-undersupply-surface: rgba(15, 118, 110, 0.12);
+  --status-oversupply-text: #B45309;
+  --status-oversupply-surface: rgba(180, 83, 9, 0.12);
+  --status-balanced-text: #15803D;
+  --status-balanced-surface: rgba(21, 128, 61, 0.12);
+  --status-low-base-text: #64748B;
+  --status-low-base-surface: rgba(100, 116, 139, 0.12);
+  --status-unavailable-text: #64748B;
+
+  /* Success / Warning / Danger / Info */
+  --success-text: #15803D;
+  --success-surface: rgba(21, 128, 61, 0.12);
+  --warning-text: #B45309;
+  --warning-surface: rgba(180, 83, 9, 0.12);
+  --danger-text: #C9372A;
+  --danger-surface: rgba(201, 55, 42, 0.12);
+  --info-text: #0F766E;
+  --info-surface: rgba(15, 118, 110, 0.12);
 
   /* Overlay */
-  --overlay-scrim: rgb(43 36 32 / 38%);
+  --overlay-scrim: rgba(17, 24, 39, 0.48);
 
-  /* Chart series — five maximum, then "Other" in grey */
-  --chart-series-1: #B5562E;  /* terracotta */
-  --chart-series-2: #2F6F6A;  /* teal */
-  --chart-series-3: #C8922E;  /* ochre */
-  --chart-series-4: #6F8F72;  /* sage */
-  --chart-series-5: #7A4E6B;  /* plum */
-  --chart-other:    #8A7C70;
-  --chart-axis:     var(--text-secondary);
-  --chart-label:    var(--text-secondary);
-  --chart-grid:     var(--border-subtle);
-  --chart-missing:  var(--bg-subtle);
+  /* Chart series (5 maximum, then "Other" in grey) */
+  --chart-series-1: #C9372A;
+  --chart-series-2: #0F766E;
+  --chart-series-3: #F59E0B;
+  --chart-series-4: #7C3AED;
+  --chart-series-5: #64748B;
+  --chart-other: #94A3B8;
+  --chart-axis: var(--text-secondary);
+  --chart-label: var(--text-secondary);
+  --chart-grid: var(--border-subtle);
+  --chart-missing: var(--bg-subtle);
   --chart-interval: var(--accent-subtle);
 
-  /* Category / ranking status colours */
-  --status-undersupply-text:    #2F6F6A;  --status-undersupply-surface:  #E1EFEC;
-  --status-oversupply-text:     #9E4A26;  --status-oversupply-surface:   #F6E3D8;
-  --status-balanced-text:       #4E6B50;  --status-balanced-surface:     #E3ECE1;
-  --status-trained-high-text:   #7A6A1F;  --status-trained-high-surface: #F5E9CC;
-  --status-low-base-text:       #5B5B5B;  --status-low-base-surface:     #ECEAE6;
-  --status-unavailable-text:    #6B5E55;
-
-  /* Typography — Fraunces display, Inter UI, Noto Indic */
-  --font-display:   "Fraunces Variable", Georgia, serif;
-  --font-family:    "Inter Variable", "Segoe UI", system-ui, sans-serif;
-  --font-indic:     "Noto Sans Devanagari", "Inter Variable", sans-serif;
-  /* Alias for editorial serif usage in public pages */
+  /* Typography — Poppins & Noto Sans Devanagari */
+  --font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-indic: "Noto Sans Devanagari", "Poppins", sans-serif;
   --font-editorial: var(--font-display);
 
-  /* Type scale — DESIGN.md §4.1 */
-  --text-display:  2.5rem;    /* 40px — Fraunces 500, page title landing */
-  --text-h1:       1.875rem;  /* 30px — Fraunces 500, page title app */
-  --text-h2:       1.375rem;  /* 22px — Fraunces 500, section title */
-  --text-h3:       1.0625rem; /* 17px — Inter 600, card title */
-  --text-body:     1rem;      /* 16px — minimum body */
-  --text-small:    0.875rem;  /* 14px — tables, helper */
-  --text-kpi:      2.25rem;   /* 36px — Fraunces 500, headline numbers */
-  /* Aliases used by existing components */
-  --text-page:     var(--text-h1);
-  --text-section:  var(--text-h2);
-  --text-control:  var(--text-small);
-  --text-meta:     0.8125rem; /* 13px */
-  --text-label:    0.75rem;   /* 12px */
+  /* Type scale */
+  --text-display: clamp(2.5rem, 5vw, 3.75rem); /* 56-64px */
+  --text-h1: clamp(2rem, 4vw, 2.75rem);
+  --text-h2: clamp(1.75rem, 3vw, 2.25rem); /* 36-40px */
+  --text-h3: 1.4rem; /* 22-24px */
+  --text-body: 1.0625rem; /* 16-18px */
+  --text-small: 0.875rem; /* 14px */
+  --text-meta: 0.8125rem; /* 13px */
+  --text-label: 0.75rem; /* 12px uppercase */
+  --text-kpi: clamp(2rem, 3.5vw, 2.5rem); /* 32-40px tabular */
 
-  /* Spacing — 4px base, DESIGN.md §5 */
-  --space-1: 4px;  --space-2: 8px;   --space-3: 12px;
-  --space-4: 16px; --space-5: 24px;  --space-6: 32px;
-  --space-7: 48px; --space-8: 64px;  --space-9: 96px;
+  /* Spacing on 8px grid */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
+  --space-6: 48px;
+  --space-7: 56px;
+  --space-8: 64px;
+  --space-9: 96px;
 
-  /* Grid */
-  --content-width: 1200px;
-  --page-gutter:   32px;
-  --grid-gap:      24px;
-  --grid-columns:  12;
-  --sidebar-width: 232px;
+  /* Shapes */
+  --radius-pill: 999px;
+  --radius-card: 20px;
+  --radius-input: 12px;
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
 
-  /* Shape — DESIGN.md §5 */
-  --radius-sm:   4px;            /* inputs, chips */
-  --radius-md:   10px;           /* cards, tables */
-  --radius-lg:   10px;           /* same as md for consistency */
-  --radius-pill:  999px;         /* pills, buttons */
-  --radius-arch:  999px 999px 16px 16px; /* arch frames */
+  /* Layout grid */
+  --content-width: 1280px;
+  --page-gutter: 32px;
+  --grid-gap: 24px;
+  --grid-columns: 12;
+  --sidebar-width-collapsed: 72px;
+  --sidebar-width-expanded: 248px;
+  --sidebar-width: 72px;
 
-  /* Elevation — none by default */
-  --shadow-card-hover: 0 1px 2px rgba(43,36,32,0.06);
-  --shadow-overlay:    0 12px 32px var(--overlay-scrim);
-
-  /* Motion — DESIGN.md §9 */
-  --motion-fast:    120ms;  /* micro-feedback */
-  --motion-base:    180ms;  /* hover, focus */
-  --motion-page:    180ms;
+  /* Motion */
+  --motion-fast: 120ms;
+  --motion-base: 180ms;
+  --motion-page: 240ms;
   --motion-overlay: 220ms;
-  --ease-standard:  cubic-bezier(0.2, 0, 0, 1);
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
 }
 
-/* ── Dark theme (optional) ─────────────────────────────────────────────── */
+/* ── Dark theme ───────────────────────────────────────────────────────── */
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --bg-canvas:  #1E1A16;
-  --bg-surface: #27221D;
-  --bg-subtle:  #312A23;
-  --bg-hover:   #3A3229;
+  --bg-canvas: #111113;
+  --bg-canvas-gradient: #111113;
+  --bg-glow: radial-gradient(circle at 50% 35%, rgba(255, 107, 87, 0.16) 0%, rgba(17, 17, 19, 0) 70%);
+  --bg-surface: rgba(28, 28, 32, 0.72);
+  --bg-surface-solid: #1C1C20;
+  --bg-subtle: rgba(255, 255, 255, 0.05);
+  --bg-hover: rgba(38, 38, 44, 0.84);
 
-  --text-primary:   #F3ECDF;
-  --text-secondary: #C9BBA9;
-  --text-meta:      #B3A593;
+  --glass-surface: rgba(28, 28, 32, 0.72);
+  --glass-surface-hover: rgba(38, 38, 44, 0.84);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: blur(18px) saturate(140%);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
 
-  --border-subtle:  #3F372F;
-  --border-control: #7E7065;
+  --text-primary: #F3F4F6;
+  --text-secondary: #A1A7B3;
+  --text-meta: #9CA3AF;
 
-  --accent-fill:    #E08A5E;
-  --accent-hover:   #EA9E78;
-  --accent-on-fill: #1E1A16;
-  --accent-text:    #E9A482;
-  --accent-subtle:  #3D2C22;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-control: rgba(255, 255, 255, 0.16);
 
-  --focus-ring: #5FB5AE;
+  --accent-fill: #FF6B57;
+  --accent-hover: #E05A47;
+  --accent-on-fill: #111113;
+  --accent-text: #FF6B57;
+  --accent-subtle: rgba(255, 107, 87, 0.14);
+  --accent-glow: rgba(255, 107, 87, 0.16);
+  --accent-secondary: #1F2937;
 
-  --success-text: #98C9A8;  --success-surface: #20382A;
-  --warning-text: #E4BE77;  --warning-surface: #392F1D;
-  --danger-text:  #F0A1A5;  --danger-surface:  #3D2527;
-  --info-text:    #7EC5C0;  --info-surface:    #1E3332;
+  --focus-ring: #FF6B57;
 
-  --overlay-scrim: rgb(0 0 0 / 64%);
+  --status-undersupply-text: #2DD4BF;
+  --status-undersupply-surface: rgba(45, 212, 191, 0.15);
+  --status-oversupply-text: #FBBF24;
+  --status-oversupply-surface: rgba(251, 191, 36, 0.15);
+  --status-balanced-text: #4ADE80;
+  --status-balanced-surface: rgba(74, 222, 128, 0.15);
+  --status-low-base-text: #94A3B8;
+  --status-low-base-surface: rgba(148, 163, 184, 0.15);
+  --status-unavailable-text: #94A3B8;
+
+  --success-text: #4ADE80;
+  --success-surface: rgba(74, 222, 128, 0.15);
+  --warning-text: #FBBF24;
+  --warning-surface: rgba(251, 191, 36, 0.15);
+  --danger-text: #FF6B57;
+  --danger-surface: rgba(255, 107, 87, 0.15);
+  --info-text: #2DD4BF;
+  --info-surface: rgba(45, 212, 191, 0.15);
+
+  --overlay-scrim: rgba(0, 0, 0, 0.72);
 }
 
-/* ── Responsive grid breakpoints ───────────────────────────────────────── */
-@media (max-width: 1199px) { :root { --grid-columns: 8; --sidebar-width: 72px; } }
-@media (max-width: 959px)  { :root { --grid-gap: 16px; } }
-@media (max-width: 767px)  { :root { --grid-columns: 4; --page-gutter: 20px; --sidebar-width: 0px; } }
-
-/* ── Reduced motion ────────────────────────────────────────────────────── */
+/* ── Reduced motion overrides ─────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   :root {
     --motion-fast: 0ms;

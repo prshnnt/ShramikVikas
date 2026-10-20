@@ -50,8 +50,12 @@ export const gapEn = {
     'gap.pairCount': '{count} source-context assessments · {calculated} eligible calculations',
     'gap.demandLink': 'Inspect demand evidence', 'gap.supplyLink': 'Inspect training evidence',
     'gap.coverageTitle': 'Gap capability coverage', 'gap.national': 'National', 'gap.state_ut': 'State / UT', 'gap.district': 'District',
+    'gap.indicatorTitle': 'Indicator Definition: Indicative Pressure',
+    'gap.indicatorDef': 'Ranks represent indicative labour pressure based on normalized supply-to-vacancy ratios across public sources, not validated hard shortages. Data does not assert causal gaps.',
 };
 export const gapHi = {
+    'gap.indicatorTitle': 'संकेतक परिभाषा: सांकेतिक दबाव (Indicative Pressure)',
+    'gap.indicatorDef': 'रैंकिंग सार्वजनिक स्रोतों में सामान्यीकृत आपूर्ति-से-रिक्ति अनुपातों पर आधारित सांकेतिक श्रम दबाव का प्रतिनिधित्व करती है, न कि सत्यापन किए गए कठोर अंतर का।',
     'gap.previous': 'पिछले आकलन', 'gap.next': 'अगले आकलन',
     'gap.nav': 'माँग × आपूर्ति', 'gap.title': 'अंतर मापने की शुरुआत तुलनीय साक्ष्य से होती है',
     'gap.intro': 'उपलब्ध माँग और प्रशिक्षण अवलोकनों को देखें और जानें कि मापनीय अंतर प्रकाशित करने से पहले किन शर्तों का पूरा होना आवश्यक है।',
