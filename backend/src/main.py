@@ -69,6 +69,7 @@ if (FRONTEND_DIST / "assets").is_dir():
 
 
 @app.get("/")
+@app.head("/", include_in_schema=False)
 def root():
     index_file = FRONTEND_DIST / "index.html"
     if index_file.is_file():
@@ -81,6 +82,7 @@ def root():
 
 
 @app.get("/{full_path:path}")
+@app.head("/{full_path:path}", include_in_schema=False)
 def serve_spa(full_path: str):
     if full_path.startswith(("api/", "docs", "redoc", "openapi.json")):
         raise HTTPException(status_code=404, detail="Not found")
