@@ -13,6 +13,8 @@ import { WorkspaceHeader } from './WorkspaceHeader';
 import { WorkspaceBottomNav } from './WorkspaceBottomNav';
 import { CommandPalette } from '../../components/navigation/CommandPalette';
 import { WorkspaceDataBanner } from '../../components/workspace/WorkspaceDataBanner';
+import { ErrorBoundary } from '../../components/ui/ErrorBoundary';
+import { RouteErrorFallback } from '../../components/ui/RouteErrorFallback';
 import { tokens } from '../../theme';
 
 const RealIntelligencePage = lazy(() =>
@@ -217,13 +219,20 @@ function WorkspaceShell() {
 
           {/* Dynamic Page Views */}
           <Box key={location.pathname} sx={{ mt: 2 }}>
-            {mode === 'real' && isIntelligence ? (
-              <Suspense fallback={<p role="status">{t('real.loading')}</p>}>
-                <RealIntelligencePage />
-              </Suspense>
-            ) : (
-              <Outlet />
-            )}
+            <ErrorBoundary
+              resetKeys={[location.pathname]}
+              fallbackRender={(props) => (
+                <RouteErrorFallback {...props} title={page?.title} />
+              )}
+            >
+              {mode === 'real' && isIntelligence ? (
+                <Suspense fallback={<p role="status">{t('real.loading')}</p>}>
+                  <RealIntelligencePage />
+                </Suspense>
+              ) : (
+                <Outlet />
+              )}
+            </ErrorBoundary>
           </Box>
         </Box>
 

@@ -5,6 +5,8 @@ import { useLocale } from '../../hooks/usePreferences';
 import { getPublicTitles } from '../../app/config/publicNavigation';
 import { PublicNavbar } from './PublicNavbar';
 import { PublicFooter } from './PublicFooter';
+import { ErrorBoundary } from '../../components/ui/ErrorBoundary';
+import { RouteErrorFallback } from '../../components/ui/RouteErrorFallback';
 
 export function PublicLayout() {
   const { t } = useLocale();
@@ -64,7 +66,12 @@ export function PublicLayout() {
           outline: 'none',
         }}
       >
-        <Outlet />
+        <ErrorBoundary
+          resetKeys={[pathname]}
+          fallbackRender={(props) => <RouteErrorFallback {...props} />}
+        >
+          <Outlet />
+        </ErrorBoundary>
       </Box>
 
       <PublicFooter />

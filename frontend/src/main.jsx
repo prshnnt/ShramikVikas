@@ -10,9 +10,24 @@ import "./styles/footer.css";
 import "simplebar-react/dist/simplebar.min.css";
 import "./styles/phase231.css";
 import App from "./app/App";
-createRoot(document.getElementById("root")).render(<StrictMode>
-    <App />
-  </StrictMode>);
+import { ErrorBoundary } from "./components/ui/ErrorBoundary";
+import { RootErrorFallback } from "./components/ui/RootErrorFallback";
+
+// Global listeners for unhandled asynchronous errors
+window.addEventListener("unhandledrejection", (event) => {
+  console.error("Unhandled Promise Rejection:", event.reason);
+});
+window.addEventListener("error", (event) => {
+  console.error("Global window error:", event.error || event.message);
+});
+
+createRoot(document.getElementById("root")).render(
+  <StrictMode>
+    <ErrorBoundary fallbackRender={(props) => <RootErrorFallback {...props} />}>
+      <App />
+    </ErrorBoundary>
+  </StrictMode>
+);
 import "./styles/phase23.css";
 import "./styles/phase24.css";
 import "./styles/phase25.css";
