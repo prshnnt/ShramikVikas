@@ -90,25 +90,42 @@ export function CommandPalette({ onClose }) {
           getOptionLabel={(option) => option.label || ''}
           onChange={handleSelect}
           renderInput={(params) => {
-            const { InputProps, ...restParams } = params;
+            const inputSlotProps = params.slotProps?.input;
+            const legacyInputProps = params.InputProps;
+            const existingStartAdornment =
+              inputSlotProps?.startAdornment ?? legacyInputProps?.startAdornment;
+
+            const startAdornment = (
+              <>
+                <InputAdornment position="start">
+                  <Search sx={{ color: 'var(--accent-text)', fontSize: 22 }} />
+                </InputAdornment>
+                {existingStartAdornment}
+              </>
+            );
+
             return (
               <TextField
-                {...restParams}
+                {...params}
                 autoFocus
                 placeholder={t('search.placeholder') || 'Search pages, states, industries (Ctrl+K)...'}
                 aria-label={t('search.pages') || 'Search command palette'}
                 variant="outlined"
-                InputProps={{
-                  ...InputProps,
-                  startAdornment: (
-                    <>
-                      <InputAdornment position="start">
-                        <Search sx={{ color: 'var(--accent-text)', fontSize: 22 }} />
-                      </InputAdornment>
-                      {InputProps.startAdornment}
-                    </>
-                  ),
+                slotProps={{
+                  ...params.slotProps,
+                  input: {
+                    ...inputSlotProps,
+                    startAdornment,
+                  },
                 }}
+                {...(legacyInputProps
+                  ? {
+                      InputProps: {
+                        ...legacyInputProps,
+                        startAdornment,
+                      },
+                    }
+                  : {})}
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     borderRadius: tokens.radius.input,
