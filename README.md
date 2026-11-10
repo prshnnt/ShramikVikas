@@ -1757,9 +1757,3 @@ See [frontend setup and architecture](frontend/README.md) and [Phase 1 verificat
 The architecture in this README represents the **target product design and development roadmap**, not a claim that every listed capability has already been implemented.
 
 ---
-
-# 53. License
-
-This project is being developed as a prototype for **Smart India Hackathon 2026**.
-
-License and open-source terms can be finalized after the hackathon.
